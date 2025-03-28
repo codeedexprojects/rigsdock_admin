@@ -1,0 +1,174 @@
+/* VendorProfile.css */
+.vendorprofile-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .vendorprofile-card {
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    background-color: #ffffff;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .vendorprofile-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .vendorprofile-header {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .vendorprofile-logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .vendorprofile-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #007bff;
+    background-color: #f8f9fa;
+    display: block;
+    margin: auto;
+  }
+  
+  .vendorprofile-field-label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  
+  .vendorprofile-field-value {
+    font-size: 16px;
+    color: #222;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+  }
+  
+  .vendorprofile-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  .vendorprofile-status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .vendorprofile-status-approved {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border: 1px solid #c3e6cb;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  
+  .vendorprofile-status-pending {
+    background-color: #fff3cd; /* Light yellow */
+    color: #856404; /* Dark yellow */
+    border: 1px solid #ffeeba;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  
+  .vendorprofile-store-images {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  
+  .vendorprofile-store-images img {
+    width: 100%;
+    max-width: 140px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #ddd;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .vendorprofile-store-images img:hover {
+    transform: scale(1.08);
+    border-color: #007bff;
+  }
+  
+  .vendorprofile-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .vendorprofile-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Primary Button */
+  .vendorprofile-btn-primary {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .vendorprofile-btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 91, 187, 0.3);
+  }
+  
+  .vendorprofile-btn-primary:active {
+    background-color: #004494;
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0, 91, 187, 0.3);
+  }
+  
+  /* Secondary Button */
+  .vendorprofile-btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .vendorprofile-btn-secondary:hover {
+    background-color: #545b62;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(52, 58, 64, 0.3);
+  }
+  
+  .vendorprofile-btn-secondary:active {
+    background-color: #3d4348;
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(52, 58, 64, 0.3);
+  }
+  

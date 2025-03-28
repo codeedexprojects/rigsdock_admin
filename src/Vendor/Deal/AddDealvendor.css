@@ -1,0 +1,139 @@
+/* AddDealvendor.css - Updated styling */
+
+.deal-container {
+  padding: 2rem 0;
+}
+
+.deal-card {
+  background: white;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem !important;
+  overflow: hidden;
+}
+
+.deal-title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #0A5FBF, #2a7dd7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-group-custom {
+  border-bottom: 1px solid #eceff1;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group-custom:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.deal-label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.form-control-lg {
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem !important;
+  border: 2px solid #e2e8f0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control-lg:focus {
+  border-color: #0A5FBF !important;
+  box-shadow: 0 0 0 0.25rem rgba(10, 95, 191, 0.25);
+}
+
+.preview-card {
+  background: linear-gradient(135deg, #0A5FBF, #2a7dd7);
+  border-radius: 0.75rem !important;
+}
+
+.submit-btn {
+  background-color: #0A5FBF;
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  border-radius: 0.75rem !important;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  background-color: #084fa0;
+}
+
+/* Fixed DatePicker Styling */
+.react-datepicker-wrapper {
+  width: 100%;
+  display: block;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+  display: block;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  height: 52px;
+  border: none !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+}
+
+.react-datepicker__input-container input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.custom-input-group {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.custom-input-icon {
+  background: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-right: 2px solid #e2e8f0;
+  border-radius: 0.75rem 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-input-field, 
+.custom-date-input {
+  flex: 1;
+  border: none !important;
+  padding: 0.75rem 1rem;
+  background: transparent !important;
+  width: 100%;
+}
+
+.custom-input-field:focus, 
+.custom-date-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.expiry-date-group .custom-input-icon {
+  font-size: 1rem;
+}

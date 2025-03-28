@@ -1,0 +1,76 @@
+.coupon-container {
+  box-shadow: 0px 8px 32px 0px rgba(51, 38, 174, 0.08);
+  padding: 20px;
+  border-radius: 10px;
+  background-color: white;
+  margin: 20px;
+}
+
+.add-coupon-heading {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #212b36;
+}
+
+.add-coupon-subheading {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #1c2a53;
+  margin-bottom: 15px;
+}
+
+.addcoupon_label {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #8e95a9;
+}
+
+.addcoupon_form {
+  border: 1px solid #cdd1de;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.addcoupon_form::placeholder {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #1c2a53;
+}
+.addcoupon_form::placeholder {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #1c2a53;
+}
+.addcoupon_checkbox label {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #1c2a53;
+}
+
+button.w-100 {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.add_coupon_sn {
+  background-color: #0a5fbf;
+  border-radius: 50%;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px; /* Adds space between number and text */
+}
