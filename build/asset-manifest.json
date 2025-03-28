@@ -1,28 +1,28 @@
 {
   "files": {
-    "main.css": "/static/css/main.e7dfa15b.css",
-    "main.js": "/static/js/main.9bb21202.js",
-    "static/js/727.19278a36.chunk.js": "/static/js/727.19278a36.chunk.js",
-    "static/js/453.6557e736.chunk.js": "/static/js/453.6557e736.chunk.js",
-    "static/js/943.dff2120d.chunk.js": "/static/js/943.dff2120d.chunk.js",
-    "static/media/dtdc.png": "/static/media/dtdc.69e2e00b62f8864dd0e4.png",
-    "static/media/dhl.png": "/static/media/dhl.85d82b4b515ab6f8e97e.png",
-    "static/media/indianpost.png": "/static/media/indianpost.1e7eb95df2bc79ee9211.png",
-    "static/media/bluedart.png": "/static/media/bluedart.adbb03a813d08be83d4a.png",
-    "static/media/delhivery.png": "/static/media/delhivery.cf8114b73e7cc3efd142.png",
-    "static/media/poppins-latin-400-normal.woff": "/static/media/poppins-latin-400-normal.1458587c0aa7cd06b82b.woff",
-    "static/media/poppins-latin-400-normal.woff2": "/static/media/poppins-latin-400-normal.405055dd680fa1dcdfa2.woff2",
-    "static/media/poppins-latin-ext-400-normal.woff": "/static/media/poppins-latin-ext-400-normal.7e12786771ac4a8e6a5c.woff",
-    "static/media/poppins-latin-ext-400-normal.woff2": "/static/media/poppins-latin-ext-400-normal.d7c074a9c34fe9785f69.woff2",
-    "index.html": "/index.html",
-    "main.e7dfa15b.css.map": "/static/css/main.e7dfa15b.css.map",
-    "main.9bb21202.js.map": "/static/js/main.9bb21202.js.map",
-    "727.19278a36.chunk.js.map": "/static/js/727.19278a36.chunk.js.map",
-    "453.6557e736.chunk.js.map": "/static/js/453.6557e736.chunk.js.map",
-    "943.dff2120d.chunk.js.map": "/static/js/943.dff2120d.chunk.js.map"
+    "main.css": "/admin/static/css/main.c674814a.css",
+    "main.js": "/admin/static/js/main.181ef4ae.js",
+    "static/js/727.19278a36.chunk.js": "/admin/static/js/727.19278a36.chunk.js",
+    "static/js/453.6557e736.chunk.js": "/admin/static/js/453.6557e736.chunk.js",
+    "static/js/943.dff2120d.chunk.js": "/admin/static/js/943.dff2120d.chunk.js",
+    "static/media/dtdc.png": "/admin/static/media/dtdc.69e2e00b62f8864dd0e4.png",
+    "static/media/dhl.png": "/admin/static/media/dhl.85d82b4b515ab6f8e97e.png",
+    "static/media/indianpost.png": "/admin/static/media/indianpost.1e7eb95df2bc79ee9211.png",
+    "static/media/bluedart.png": "/admin/static/media/bluedart.adbb03a813d08be83d4a.png",
+    "static/media/delhivery.png": "/admin/static/media/delhivery.cf8114b73e7cc3efd142.png",
+    "static/media/poppins-latin-400-normal.woff": "/admin/static/media/poppins-latin-400-normal.1458587c0aa7cd06b82b.woff",
+    "static/media/poppins-latin-400-normal.woff2": "/admin/static/media/poppins-latin-400-normal.405055dd680fa1dcdfa2.woff2",
+    "static/media/poppins-latin-ext-400-normal.woff": "/admin/static/media/poppins-latin-ext-400-normal.7e12786771ac4a8e6a5c.woff",
+    "static/media/poppins-latin-ext-400-normal.woff2": "/admin/static/media/poppins-latin-ext-400-normal.d7c074a9c34fe9785f69.woff2",
+    "index.html": "/admin/index.html",
+    "main.c674814a.css.map": "/admin/static/css/main.c674814a.css.map",
+    "main.181ef4ae.js.map": "/admin/static/js/main.181ef4ae.js.map",
+    "727.19278a36.chunk.js.map": "/admin/static/js/727.19278a36.chunk.js.map",
+    "453.6557e736.chunk.js.map": "/admin/static/js/453.6557e736.chunk.js.map",
+    "943.dff2120d.chunk.js.map": "/admin/static/js/943.dff2120d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e7dfa15b.css",
-    "static/js/main.9bb21202.js"
+    "static/css/main.c674814a.css",
+    "static/js/main.181ef4ae.js"
   ]
 }

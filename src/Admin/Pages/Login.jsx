@@ -10,14 +10,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  ToggleButtonGroup,
-  ToggleButton,
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import { adminLoginApi, vendorLoginApi } from "../../services/allApi";
+import { adminLoginApi } from "../../services/allApi";
 
 function Login() {
-  const [loginType, setLoginType] = useState("admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,35 +49,20 @@ function Login() {
     if (!validateInputs()) return;
 
     setLoading(true);
-    const loginApi = loginType === "admin" ? adminLoginApi : vendorLoginApi;
 
     try {
-      const response = await loginApi({ email, password });
-      console.log(response);
+      const response = await adminLoginApi({ email, password });
 
       if (response.status === 200) {
-        const { accessToken, refreshToken, admin, vendorId } = response.data;
-
-        if (loginType === "admin") {
-          localStorage.removeItem("rigsdock_vendor");
-        } else {
-          localStorage.removeItem("rigsdock_admin");
-        }
+        const { accessToken, refreshToken, admin } = response.data;
+        localStorage.removeItem("rigsdock_vendor");
 
         localStorage.setItem("rigsdock_accessToken", accessToken);
         localStorage.setItem("rigsdock_refreshToken", refreshToken);
+        localStorage.setItem("rigsdock_admin", admin);
+        localStorage.setItem("rigsdock_adminid", admin.id);
 
-        if (loginType === "admin") {
-          localStorage.setItem("rigsdock_admin", admin);
-          localStorage.setItem("rigsdock_adminid", admin.id);
-
-        } else {
-          localStorage.setItem("rigsdock_vendorid", vendorId);
-          localStorage.setItem("rigsdock_vendor", vendorId);
-
-        }
-
-        setSnackbarMessage("Login successful!");
+        setSnackbarMessage("Admin Login successful!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setTimeout(() => navigate("/home"), 1500);
@@ -88,9 +70,7 @@ function Login() {
         throw new Error("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      setSnackbarMessage(
-        err.message || "Something went wrong. Please try again later."
-      );
+      setSnackbarMessage(err.message || "Something went wrong. Please try again later.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
@@ -102,29 +82,13 @@ function Login() {
     <Container component="main" maxWidth="xs">
       <Paper
         elevation={6}
-        sx={{
-          padding: 4,
-          borderRadius: 3,
-          mt: 8,
-          textAlign: "center",
-          backgroundColor: "#f5f5f5",
-        }}
+        sx={{ padding: 4, borderRadius: 3, mt: 8, textAlign: "center", backgroundColor: "#f5f5f5" }}
       >
         <Box display="flex" flexDirection="column" alignItems="center">
           <LockIcon sx={{ fontSize: 50, color: "primary.main", mb: 1 }} />
           <Typography variant="h5" gutterBottom fontWeight="bold">
-            {loginType === "admin" ? "Admin Login" : "Vendor Login"}
+            Admin Login
           </Typography>
-
-          <ToggleButtonGroup
-            value={loginType}
-            exclusive
-            onChange={(e, newType) => newType && setLoginType(newType)}
-            sx={{ mt: 2, mb: 2 }}
-          >
-            <ToggleButton value="admin">Admin</ToggleButton>
-            <ToggleButton value="vendor">Vendor</ToggleButton>
-          </ToggleButtonGroup>
         </Box>
 
         <Box component="form" sx={{ mt: 2 }}>
