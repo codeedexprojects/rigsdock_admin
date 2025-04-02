@@ -146,7 +146,7 @@ export const updateCategoryApi = async (id, categoryData) => {
   }
 
   try {
-    const response = await commonApi("PUT", url, categoryData, {
+    const response = await commonApi("PATCH", url, categoryData, {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     });

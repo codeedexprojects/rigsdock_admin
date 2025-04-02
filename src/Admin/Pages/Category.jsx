@@ -155,10 +155,10 @@ const CategoryList = () => {
     page * itemsPerPage
   );
 
-  const handleEditClick = () => {
-    navigate(`/edit-category/${categories._id}`);
-    
+  const handleEditClick = (id) => {
+    navigate(`/edit-category/${id}`);
   };
+  
   return (
     <Box sx={{ p: 3 }}>
       {/* Header Section */}
@@ -289,7 +289,7 @@ const CategoryList = () => {
               }}
               startIcon={<Edit />}
               fullWidth
-              onClick={handleEditClick}
+              onClick={() => handleEditClick(item._id)}
             >
               Edit
             </Button>
