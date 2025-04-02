@@ -32,7 +32,8 @@ import {
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { getproductsApi, deleteProductApi } from "../../../services/allApi";
+import { getproductsApi, deleteProductApi, bulkDeleteVendorProductsApi } from "../../../services/allApi";
+import { BASE_URL } from "../../../services/baseUrl";
 // import { useNavigate } from "react-router-dom";
 // import AddIcon from "@mui/icons-material/Add";
 
@@ -78,10 +79,11 @@ const ViewProducts = () => {
   };
   const handleDeleteProduct = async () => {
     if (!selectedProductIds.length) return;
-
+  
     setIsDeleting(true);
     try {
-      const response = await deleteProductApi(selectedProductIds);
+      const response = await bulkDeleteVendorProductsApi(selectedProductIds);
+  
       if (response.success) {
         setProducts((prev) =>
           prev.filter((p) => !selectedProductIds.includes(p._id))
@@ -105,6 +107,7 @@ const ViewProducts = () => {
     setIsDeleting(false);
     handleCloseDeleteModal();
   };
+  
 
   // Fetch products from API
   useEffect(() => {
@@ -479,7 +482,7 @@ const ViewProducts = () => {
                         <Avatar
                           src={
                             product.images && product.images.length > 0
-                              ? `/uploads/${product.images[0]}`
+                              ? `${BASE_URL}/uploads/${product.images[0]}`
                               : ""
                           }
                           variant="rounded"

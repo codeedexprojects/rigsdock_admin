@@ -52,15 +52,17 @@ function VendorLogin() {
 
     try {
       const response = await vendorLoginApi({ email, password });
+console.log(response);
 
       if (response.status === 200) {
-        const { accessToken, refreshToken, admin } = response.data;
+        const { accessToken, refreshToken, vendorId,role } = response.data;
+
         localStorage.removeItem("rigsdock_admin");
 
         localStorage.setItem("rigsdock_accessToken", accessToken);
         localStorage.setItem("rigsdock_refreshToken", refreshToken);
-        localStorage.setItem("rigsdock_vendor", admin);
-        localStorage.setItem("rigsdock_vendorid", admin.id);
+        localStorage.setItem("rigsdock_vendor", role);
+        localStorage.setItem("rigsdock_vendorid", vendorId);
 
         setSnackbarMessage("Login successful!");
         setSnackbarSeverity("success");

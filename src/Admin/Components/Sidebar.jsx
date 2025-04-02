@@ -33,6 +33,7 @@ import {
 import { styled } from "@mui/material/styles";
 import LatestNotification from "./Notification/LatestNotification";
 import LatestVendorNotification from "../../Vendor/vendornotification/LatestVendorNotification";
+import { toast, ToastContainer } from "react-toastify";
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
   width: 260,
@@ -122,6 +123,28 @@ const Sidebar = ({ onSelect }) => {
     setLoginType(storedLoginType);
   }, []);
 
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem("rigsdock_accessToken");
+    localStorage.removeItem("rigsdock_refreshToken");
+    localStorage.removeItem("rigsdock_admin");
+    localStorage.removeItem("rigsdock_adminid");
+  
+    toast.success("Admin Logout successful!");
+  
+    setTimeout(() => navigate("/"), 1500);
+  };
+  
+   const handlevendorlogout = () => {
+    localStorage.removeItem("rigsdock_accessToken");
+    localStorage.removeItem("rigsdock_refreshToken");
+    localStorage.removeItem("rigsdock_vendor");
+    localStorage.removeItem("rigsdock_vendorid");
+  
+    toast.success("Vendor Logout successful!");
+  
+    setTimeout(() => navigate("/vendor-login"), 1500);
+  };
   return (
     <StyledDrawer variant="permanent" anchor="left">
       <Box
@@ -204,6 +227,17 @@ const Sidebar = ({ onSelect }) => {
                   </StyledListItem>
                 </List>
               </Collapse>
+              <StyledListItem
+                onClick={() => handleSelect("/customers")}
+                button
+                active={activeSection === "/customers"}
+              >
+                <ListItemIcon>
+                  <Group />
+                </ListItemIcon>
+                <ListItemText primary="Customers" />
+              </StyledListItem>
+
 
               <StyledListItem
                 onClick={() => handleSelect("/orders")}
@@ -335,7 +369,7 @@ const Sidebar = ({ onSelect }) => {
                 </List>
               </Collapse>
 
-              <StyledListItem
+              {/* <StyledListItem
                 onClick={() => handleSelect("/account-analysis")}
                 button
                 active={activeSection === "/account-analysis"}
@@ -344,7 +378,7 @@ const Sidebar = ({ onSelect }) => {
                   <AccountBalance />
                 </ListItemIcon>
                 <ListItemText primary="Account Analysis" />
-              </StyledListItem>
+              </StyledListItem> */}
 
               <StyledListItem
                 onClick={() => handleSelect("/profile")}
@@ -411,7 +445,7 @@ const Sidebar = ({ onSelect }) => {
                 onClose={() => setOpenNotification(false)}
               />
 
-              <StyledListItem onClick={() => handleSelect("/logout")} button>
+              <StyledListItem  onClick={handleAdminLogout} button>
                 <ListItemIcon>
                   <Logout />
                 </ListItemIcon>
@@ -670,7 +704,7 @@ const Sidebar = ({ onSelect }) => {
                 </List>
               </Collapse> */}
 
-              <StyledListItem
+              {/* <StyledListItem
                 onClick={() => handleSelect("/vendor-account-analysis")}
                 button
                 active={activeSection === "/vendor-account-analysis"}
@@ -679,7 +713,7 @@ const Sidebar = ({ onSelect }) => {
                   <AccountBalance />
                 </ListItemIcon>
                 <ListItemText primary="Account Analysis" />
-              </StyledListItem>
+              </StyledListItem> */}
 
               <StyledListItem
                 onClick={() => handleSelect("/vendor-profile")}
@@ -767,7 +801,7 @@ const Sidebar = ({ onSelect }) => {
                 onClose={() => setOpenNotification(false)}
               />
 
-              <StyledListItem onClick={() => handleSelect("/logout")} button>
+              <StyledListItem onClick={handlevendorlogout} button>
                 <ListItemIcon>
                   <Logout />
                 </ListItemIcon>
@@ -779,6 +813,7 @@ const Sidebar = ({ onSelect }) => {
       ) : (
         <p>Please log in</p>
       )}
+      <ToastContainer></ToastContainer>
     </StyledDrawer>
   );
 };

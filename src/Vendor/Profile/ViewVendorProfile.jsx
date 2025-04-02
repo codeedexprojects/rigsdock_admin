@@ -13,6 +13,7 @@ import {
   getvendorProfileApi,
   updateVendorProfileApi,
 } from "../../services/allApi";
+import { BASE_URL } from "../../services/baseUrl";
 
 function ViewVendorProfile() {
   const [profile, setProfile] = useState(null);
@@ -150,11 +151,11 @@ function ViewVendorProfile() {
         </h2>
 
         <div className="vendorprofile-logo-container">
-          <img
-            src={profile.storelogo}
-            alt="Store Logo"
-            className="vendorprofile-logo"
-          />
+        <img
+  src={profile.storelogo ? `${BASE_URL}/uploads/${profile.storelogo}` : "https://via.placeholder.com/150"}
+  alt="Store Logo"
+  className="vendorprofile-logo"
+/>
         </div>
 
         <div className="vendorprofile-status-badge">

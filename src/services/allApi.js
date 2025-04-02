@@ -200,6 +200,28 @@ export const getCategoriesApi = async () => {
   }
 };
 
+
+export const getCategoryByIdApi = async (categoryId) => {
+  const url = `${BASE_URL}/admin/category/view/${categoryId}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error fetching category by ID",
+    };
+  }
+};
+
 export const getCategoryByMainCategoryIdApi = async (mainCategoryId) => {
   const url = `${BASE_URL}/admin/category/view/category/${mainCategoryId}`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");
@@ -1492,6 +1514,34 @@ export const deletevendorProductImageApi = async (imageId, imageName) => {
 };
 
 
+
+export const deleteVendorProductAttributeApi = async (productId, attribute) => {
+  const url = `${BASE_URL}/vendor/product/${productId}/attributes-delete`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi(
+      "DELETE",
+      url,
+      { attribute }, // Send attribute in the request body
+      {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      }
+    );
+    return response;
+  } catch (error) {
+    return { success: false, error: error.message || "Error deleting product attribute" };
+  }
+};
+
+
+
+
 export const getvendorProductByIdApi = async (productId) => {
   const url = `${BASE_URL}/vendor/product/get/${productId}`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");
@@ -1583,6 +1633,40 @@ export const deleteVendorProductApi = async (productId) => {
     return { success: false, error: error.message || "Error deleting Product" };
   }
 };
+
+
+export const bulkDeleteVendorProductsApi = async (productIds) => {
+  const url = `${BASE_URL}/vendor/product/bulk-delete`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  if (!Array.isArray(productIds) || productIds.length === 0) {
+    return { success: false, error: "Please provide an array of product IDs to delete" };
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",  // Ensure Content-Type is application/json
+      },
+      body: JSON.stringify({ productIds }) // Make sure to send the body as JSON
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message || "Error deleting products" };
+  }
+};
+
+
+
+
 export const getvendordealofthedayApi = async () => {
   const url = `${BASE_URL}/vendor/dealoftheday/get`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");

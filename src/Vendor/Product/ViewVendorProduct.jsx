@@ -35,7 +35,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import Paginations from "../SellerPage/Paginations";
 import { Link, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { deleteVendorProductApi, getvendorproductsApi } from "../../services/allApi";
+import { bulkDeleteVendorProductsApi, getvendorproductsApi } from "../../services/allApi";
+import { BASE_URL } from "../../services/baseUrl";
 
 const ViewVendorProduct = () => {
   const [products, setProducts] = useState([]);
@@ -83,7 +84,7 @@ const ViewVendorProduct = () => {
 
     setIsDeleting(true);
     try {
-      const response = await deleteVendorProductApi(selectedProductIds);
+      const response = await bulkDeleteVendorProductsApi(selectedProductIds);
       if (response.success) {
         setProducts((prev) =>
           prev.filter((p) => !selectedProductIds.includes(p._id))
@@ -489,7 +490,7 @@ const ViewVendorProduct = () => {
                         <Avatar
                           src={
                             product.images && product.images.length > 0
-                              ? `/uploads/${product.images[0]}`
+                              ? `${BASE_URL}/uploads/${product.images[0]}`
                               : ""
                           }
                           variant="rounded"

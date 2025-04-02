@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Grid, CircularProgress, Button } from '@mui/material';
-import SellerProfile from '../Components/SellerDetails/SellerProfile';
-import DashboardStats from '../Components/SellerDetails/StatCard';
-import TransactionHistory from '../Components/SellerDetails/Transactions';
-import { getSellerByIdApi } from '../../services/allApi';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Box, Typography, Grid, CircularProgress, Button } from "@mui/material";
+import SellerProfile from "../Components/SellerDetails/SellerProfile";
+import DashboardStats from "../Components/SellerDetails/StatCard";
+import TransactionHistory from "../Components/SellerDetails/Transactions";
+import { getSellerByIdApi } from "../../services/allApi";
 
 const SellerDetails = () => {
-  const { sellerId } = useParams(); 
+  const { sellerId } = useParams();
   const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,10 +21,10 @@ const SellerDetails = () => {
       try {
         const response = await getSellerByIdApi(sellerId);
         console.log(response);
-        
+
         setSeller(response.data);
       } catch (err) {
-        setError('Failed to fetch seller details');
+        setError("Failed to fetch seller details");
       } finally {
         setLoading(false);
       }
@@ -35,7 +35,14 @@ const SellerDetails = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -43,8 +50,10 @@ const SellerDetails = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 5 }}>
-        <Typography variant="h6" color="error">{error}</Typography>
+      <Box sx={{ textAlign: "center", mt: 5 }}>
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }
@@ -52,7 +61,7 @@ const SellerDetails = () => {
   return (
     <Box sx={{ padding: 3 }}>
       {/* Page Title */}
-      <Typography variant="h4" sx={{ marginBottom: '20px' }}>
+      <Typography variant="h4" sx={{ marginBottom: "20px" }}>
         Seller Details
       </Typography>
 
@@ -61,7 +70,22 @@ const SellerDetails = () => {
         Dashboard &gt; Sellers List &gt; Seller Details
       </Typography>
 
-<Button variant="primary" onClick={handleChatClick}>Chat</Button>
+      <Button
+    variant="contained"
+    sx={{
+      backgroundColor: "#fea116",
+      color: "#fff",
+      '&:hover': {
+        backgroundColor: "#e89200"
+      },
+      padding: "8px 20px",
+      borderRadius: "8px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)"
+    }}
+    onClick={handleChatClick}
+  >
+    Chat
+  </Button>
       {/* Layout with Grid System */}
       <Grid container spacing={3} sx={{ mt: 3 }}>
         {/* Left Section: Profile */}

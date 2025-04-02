@@ -23,6 +23,7 @@ import {
 import { Edit, Delete, Add, FilterList } from "@mui/icons-material";
 import { getCategoriesApi, deleteCategoryApi } from "../../services/allApi";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../services/baseUrl";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -156,6 +157,7 @@ const CategoryList = () => {
 
   const handleEditClick = () => {
     navigate(`/edit-category/${categories._id}`);
+    
   };
   return (
     <Box sx={{ p: 3 }}>
@@ -237,7 +239,7 @@ const CategoryList = () => {
                 <Box display="flex" alignItems="center">
                   <CardMedia
                     component="img"
-                    image={item.image}
+                    image={`${BASE_URL}/uploads/${item.image}`}
                     alt={item.name}
                     sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
                   />

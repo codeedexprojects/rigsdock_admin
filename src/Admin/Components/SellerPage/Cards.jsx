@@ -12,6 +12,7 @@ import { FaStar } from "react-icons/fa6";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../services/baseUrl";
 
 const StyledCard = styled(Card)({
   height: "100%",
@@ -36,12 +37,12 @@ const Cards = ({ sellers }) => {
                 sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
               >
                 <Box sx={{ display: "flex", gap: 2 }}>
-                  <Avatar
-                    sx={{ width: 48, height: 48, borderRadius: "12px" }}
-                    src={seller.images[0]}
-                  >
-                    {seller.ownername?.charAt(0)}
-                  </Avatar>
+                <Avatar
+  sx={{ width: 48, height: 48, borderRadius: "12px" }}
+  src={seller.images[0] ? `${BASE_URL}/uploads/${seller.images[0]}` : undefined}
+>
+  {!seller.images[0] && seller.ownername?.charAt(0)}
+</Avatar>
                   <Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                       {seller.ownername}

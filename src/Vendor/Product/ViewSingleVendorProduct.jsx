@@ -24,7 +24,15 @@ import {
 } from "@mui/icons-material";
 
 import { useParams, useNavigate } from "react-router-dom";
-import {  deletevendorProductImageApi, editVendorProductApi, getVendorCategoryByMainCategoryIdApi, getVendorMainCategoriesApi, getvendorProductByIdApi, getVendorSubcategoryByCategoryIdApi } from "../../services/allApi";
+import {
+  deleteVendorProductAttributeApi,
+  deletevendorProductImageApi,
+  editVendorProductApi,
+  getVendorCategoryByMainCategoryIdApi,
+  getVendorMainCategoriesApi,
+  getvendorProductByIdApi,
+  getVendorSubcategoryByCategoryIdApi,
+} from "../../services/allApi";
 import { BASE_URL } from "../../services/baseUrl";
 
 const ViewSingleVendorProduct = () => {
@@ -44,6 +52,12 @@ const ViewSingleVendorProduct = () => {
     maincategory: "",
     category: "",
     subcategory: "",
+    BISCode: "",
+    HSNCode: "",
+    length:"",
+    breadth:"",
+    height:"",
+    weight:"",
     tags: [],
     attributes: {},
   });
@@ -65,16 +79,15 @@ const ViewSingleVendorProduct = () => {
 
   const [newAttribute, setNewAttribute] = useState({ key: "", value: "" });
 
-  
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
         const response = await getvendorProductByIdApi(productId);
         console.log("single-product", response);
-  
+
         const product = response.data.product;
-  
+
         // Set existing product data
         setFormData({
           name: product.name || "",
@@ -88,38 +101,44 @@ const ViewSingleVendorProduct = () => {
           maincategory: product.maincategory || "",
           category: product.category || "",
           subcategory: product.subcategory || "",
+          BISCode:product.BISCode  || "",
+          HSNCode:product.HSNCode  || "",
+          length:product.length  || "",
+          breadth:product.breadth  || "",
+          height:product.height  || "",
+          weight:product.weight  || "",
           tags: product.tags || [],
           attributes: product.attributes || {},
         });
-  
-        // Load existing images
+
         if (product.images && product.images.length > 0) {
           setExistingImages(
             product.images.map((img, index) => ({
               id: `existing-${index}`,
-              url: `${BASE_URL}/${img}`, // Ensure the correct image path
+              url: `${BASE_URL}/uploads/${img}`, 
               name: `Image ${index + 1}`,
               size: "Unknown",
             }))
           );
         }
-  
+
         if (product.maincategory) {
           try {
-            const categoryResponse = await getVendorCategoryByMainCategoryIdApi(product.maincategory);
+            const categoryResponse = await getVendorCategoryByMainCategoryIdApi(
+              product.maincategory
+            );
             setCategories(categoryResponse.data);
-            
+
             if (product.category) {
-              const subcategoryResponse = await getVendorSubcategoryByCategoryIdApi(
-                product.category
-              );
+              const subcategoryResponse =
+                await getVendorSubcategoryByCategoryIdApi(product.category);
               setSubcategories(subcategoryResponse.data);
             }
           } catch (error) {
             console.error("Error loading categories/subcategories:", error);
           }
         }
-  
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -131,7 +150,7 @@ const ViewSingleVendorProduct = () => {
         setLoading(false);
       }
     };
-  
+
     const fetchMainCategories = async () => {
       try {
         const response = await getVendorMainCategoriesApi();
@@ -145,7 +164,7 @@ const ViewSingleVendorProduct = () => {
         });
       }
     };
-  
+
     fetchMainCategories();
     fetchProductData();
   }, [productId]);
@@ -228,8 +247,8 @@ const ViewSingleVendorProduct = () => {
 
   const handleRemoveExistingImage = async (index) => {
     const imageId = productId;
-    const imageName = existingImages[index]?.url; 
-  
+    const imageName = existingImages[index]?.url;
+
     if (!imageName) {
       setAlert({
         open: true,
@@ -238,15 +257,15 @@ const ViewSingleVendorProduct = () => {
       });
       return;
     }
-  
+
     try {
       const response = await deletevendorProductImageApi(imageId, imageName);
-  
+
       if (response.success) {
         setExistingImages((prevImages) =>
           prevImages.filter((_, i) => i !== index)
         );
-  
+
         setAlert({
           open: true,
           message: "Image deleted successfully",
@@ -264,11 +283,6 @@ const ViewSingleVendorProduct = () => {
       });
     }
   };
-  
-  
-
-
-
 
   const handleAddAttribute = () => {
     if (newAttribute.key && newAttribute.value) {
@@ -283,17 +297,25 @@ const ViewSingleVendorProduct = () => {
     }
   };
 
-  // Handle attribute removal
-  const handleRemoveAttribute = (key) => {
-    const newAttributes = { ...formData.attributes };
-    delete newAttributes[key];
-    setFormData((prev) => ({
-      ...prev,
-      attributes: newAttributes,
-    }));
+  const handleRemoveAttribute = async (key) => {
+    try {
+      const response = await deleteVendorProductAttributeApi(productId, key);
+      if (response.success) {
+        setFormData((prev) => {
+          const updatedAttributes = { ...prev.attributes };
+          delete updatedAttributes[key];
+          return { ...prev, attributes: updatedAttributes };
+        });
+      } else {
+        console.error("Error deleting attribute:", response.error);
+      }
+    } catch (error) {
+      console.error("Error deleting attribute:", error.message);
+    }
   };
+  
 
-  // Handle attribute input change
+
   const handleAttributeInputChange = (e) => {
     const { name, value } = e.target;
     setNewAttribute((prev) => ({
@@ -301,7 +323,6 @@ const ViewSingleVendorProduct = () => {
       [name]: value,
     }));
   };
-
   // Fetch Categories when Main Category is Selected
   const handleMainCategoryChange = async (mainCategoryId) => {
     setFormData((prev) => ({
@@ -314,7 +335,9 @@ const ViewSingleVendorProduct = () => {
     setSubcategories([]);
 
     try {
-      const response = await getVendorCategoryByMainCategoryIdApi(mainCategoryId);
+      const response = await getVendorCategoryByMainCategoryIdApi(
+        mainCategoryId
+      );
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -325,7 +348,6 @@ const ViewSingleVendorProduct = () => {
       });
     }
   };
-
 
   const handleCategoryChange = async (categoryId, maincategoryIdParam) => {
     const mainCategoryToUse = maincategoryIdParam || formData.maincategory;
@@ -403,16 +425,27 @@ const ViewSingleVendorProduct = () => {
 
       formDataToSend.append("tags", JSON.stringify(formData.tags || []));
 
-      const attributes =
-        typeof formData.attributes === "object" ? formData.attributes : {};
-      formDataToSend.append("attributes", JSON.stringify(attributes));
-
+      if (formData.attributes && Object.keys(formData.attributes).length > 0) {
+        // Correctly structure the attributes for FormData
+        Object.entries(formData.attributes).forEach(([key, value]) => {
+          formDataToSend.append(`attributes[${key}]`, value);
+        });
+      } else {
+        formDataToSend.append("attributes", "{}");
+      }
       imageFiles.forEach((file) => {
         formDataToSend.append("images", file);
       });
 
       formDataToSend.append("imagesToDelete", JSON.stringify(imagesToDelete));
-
+      console.log("Form data entries:");
+      for (let pair of formDataToSend.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+        if (pair[0].startsWith("attributes")) {
+          console.log(`Attributes value type: ${typeof pair[1]}`);
+          console.log(`Raw attributes value: ${pair[1]}`);
+        }
+      }
       const response = await editVendorProductApi(productId, formDataToSend);
       console.log("Product updated:", response.data);
 
@@ -421,7 +454,6 @@ const ViewSingleVendorProduct = () => {
         message: "Product updated successfully!",
         severity: "success",
       });
-
     } catch (error) {
       console.error("Error updating product:", error);
       setAlert({
@@ -433,7 +465,7 @@ const ViewSingleVendorProduct = () => {
   };
 
   const handleCancel = () => {
-    navigate("/products"); 
+    navigate("/products");
   };
 
   // Handle alert close
@@ -496,8 +528,7 @@ const ViewSingleVendorProduct = () => {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <Box
                         component="img"
-                        src={image.url}
-                        sx={{
+                        src={image.url}                        sx={{
                           width: 40,
                           height: 40,
                           objectFit: "cover",
@@ -745,7 +776,7 @@ const ViewSingleVendorProduct = () => {
                     />
                   </Grid>
                 </>
-              )} */} 
+              )} */}
 
               {/* Stock */}
               <Grid item xs={12} md={6}>
@@ -772,6 +803,71 @@ const ViewSingleVendorProduct = () => {
                 />
               </Grid>
 
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="BIS Code"
+                  name="BISCode"
+                  value={formData.BISCode}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="HSN Code"
+                  name="HSNCode"
+                  value={formData.HSNCode}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="length"
+                  name="length"
+                  value={formData.length}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="breadth"
+                  name="breadth"
+                  value={formData.breadth}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="height"
+                  name="height"
+                  value={formData.height}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="weight"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
               {/* Description */}
               <Grid item xs={12}>
                 <TextField

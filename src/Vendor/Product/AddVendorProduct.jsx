@@ -41,6 +41,10 @@ const AddVendorProduct = () => {
     subcategory: "",
     BISCode: "",
     HSNCode: "",
+    length:"",
+    breadth:"",
+    height:"",
+    weight:"",
     attributes: {},
   });
 
@@ -295,6 +299,10 @@ const AddVendorProduct = () => {
           subcategory: "",
           BISCode: "",
           HSNCode: "",
+          length:"",
+          breadth:"",
+          height:"",
+          weight:"",
           attributes: {},
         });
         setImages([]);
@@ -528,6 +536,7 @@ const AddVendorProduct = () => {
                   required
                 />
               </Grid>
+              
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -539,6 +548,53 @@ const AddVendorProduct = () => {
                   required
                 />
               </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="length"
+                  name="length"
+                  value={formData.length}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+             
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="breadth"
+                  name="breadth"
+                  value={formData.breadth}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="height"
+                  name="height"
+                  value={formData.height}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="weight"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
+
 
               <Grid item xs={12}>
                 <TextField
@@ -591,31 +647,29 @@ const AddVendorProduct = () => {
                 </TextField>
               </Grid>
 
-             <Grid item xs={12}>
-             <TextField
-  select
-  fullWidth
-  label="Subcategory"
-  value={formData.subcategory || ""}
-  onChange={(e) => handleSubcategoryChange(e.target.value)}
-  variant="outlined"
-  disabled={!formData.category}
->
-  {subcategories?.length === 0 ? (
-    <MenuItem value="" disabled>
-      N/A
-    </MenuItem>
-  ) : (
-    subcategories?.map((sub) => (
-      <MenuItem key={sub._id} value={sub._id}>
-        {sub.name}
-      </MenuItem>
-    ))
-  )}
-</TextField>
-
-</Grid>
-
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Subcategory"
+                  value={formData.subcategory || ""}
+                  onChange={(e) => handleSubcategoryChange(e.target.value)}
+                  variant="outlined"
+                  disabled={!formData.category}
+                >
+                  {subcategories?.length === 0 ? (
+                    <MenuItem value="" disabled>
+                      N/A
+                    </MenuItem>
+                  ) : (
+                    subcategories?.map((sub) => (
+                      <MenuItem key={sub._id} value={sub._id}>
+                        {sub.name}
+                      </MenuItem>
+                    ))
+                  )}
+                </TextField>
+              </Grid>
             </Grid>
 
             <Box

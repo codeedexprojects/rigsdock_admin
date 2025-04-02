@@ -13,6 +13,7 @@ import {
   Avatar,
   Chip,
 } from "@mui/material";
+import { BASE_URL } from "../../../services/baseUrl";
 
 const OrderList = ({ order }) => {
   if (!order || !order.items) {
@@ -26,17 +27,34 @@ const OrderList = ({ order }) => {
   const { items, totalPrice, coupon } = order;
   const discountAmount = coupon ? coupon.discountAmount : 0;
   console.log(discountAmount);
-  
+
   const shippingRate = 5;
-  const subtotal = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const subtotal = order.items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
   return (
     <Card sx={{ borderRadius: 3, overflow: "hidden" }}>
       <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography variant="h6" fontWeight="bold">
             Order List
           </Typography>
-          <Chip label={`${order.items?.length ?? 0} Products`} sx={{ backgroundColor: "#E3F7E8", color: "#2E7D32", fontWeight: "bold" }} />
+          <Chip
+            label={`${order.items?.length ?? 0} Products`}
+            sx={{
+              backgroundColor: "#E3F7E8",
+              color: "#2E7D32",
+              fontWeight: "bold",
+            }}
+          />
         </Box>
 
         <TableContainer>
@@ -55,9 +73,19 @@ const OrderList = ({ order }) => {
                 <TableRow key={item.id}>
                   <TableCell>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Avatar src={item.product?.image || "https://via.placeholder.com/40"} variant="square" sx={{ width: 40, height: 40 }} />
+                      <Avatar
+                        src={
+                          item.product?.image
+                            ? `${BASE_URL}/uploads/${item.product.image}`
+                            : "https://via.placeholder.com/40"
+                        }
+                        variant="square"
+                        sx={{ width: 40, height: 40 }}
+                      />
                       <Box>
-                        <Typography fontWeight="bold">{item.product?.name || "Unknown"}</Typography>
+                        <Typography fontWeight="bold">
+                          {item.product?.name || "Unknown"}
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {item.product?.name || "No name available"}
                         </Typography>
@@ -67,7 +95,7 @@ const OrderList = ({ order }) => {
                   <TableCell>{item.sku || "N/A"}</TableCell>
                   <TableCell>{item.quantity || 0}</TableCell>
                   <TableCell>{item.price || "$0.00"}</TableCell>
-                  <TableCell>{(item.price)*(item.quantity) || "$0.00"}</TableCell>
+                  <TableCell>{item.price * item.quantity || "$0.00"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -79,26 +107,42 @@ const OrderList = ({ order }) => {
             <TableBody>
               <TableRow>
                 <TableCell sx={{ borderBottom: "none" }}>Subtotal</TableCell>
-                <TableCell align="right" sx={{ borderBottom: "none", fontWeight: "bold" }}>
-                {subtotal ? `₹${subtotal.toFixed(2)}` : "$0.00"}
+                <TableCell
+                  align="right"
+                  sx={{ borderBottom: "none", fontWeight: "bold" }}
+                >
+                  {subtotal ? `₹${subtotal.toFixed(2)}` : "$0.00"}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell sx={{ borderBottom: "none" }}>Discount</TableCell>
-                <TableCell align="right" sx={{ borderBottom: "none", fontWeight: "bold" }}>
-                ₹{discountAmount}
+                <TableCell
+                  align="right"
+                  sx={{ borderBottom: "none", fontWeight: "bold" }}
+                >
+                  ₹{discountAmount}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell sx={{ borderBottom: "none" }}>Shipping Rate</TableCell>
-                <TableCell align="right" sx={{ borderBottom: "none", fontWeight: "bold" }}>
+                <TableCell sx={{ borderBottom: "none" }}>
+                  Shipping Rate
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ borderBottom: "none", fontWeight: "bold" }}
+                >
                   {`₹${shippingRate.toFixed(2)}`}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell sx={{ fontSize: "1rem", fontWeight: "bold" }}>Grand Total</TableCell>
-                <TableCell align="right" sx={{ fontSize: "1rem", fontWeight: "bold" }}>
-                {totalPrice ? `₹${totalPrice.toFixed(2)}` : "$0.00"}
+                <TableCell sx={{ fontSize: "1rem", fontWeight: "bold" }}>
+                  Grand Total
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ fontSize: "1rem", fontWeight: "bold" }}
+                >
+                  {totalPrice ? `₹${totalPrice.toFixed(2)}` : "$0.00"}
                 </TableCell>
               </TableRow>
             </TableBody>

@@ -16,6 +16,7 @@ import {
   Place as PlaceIcon,
   ShoppingCart as CartIcon,
 } from "@mui/icons-material";
+import { BASE_URL } from "../../../services/baseUrl";
 
 
 
@@ -35,15 +36,15 @@ const SellerProfileCard = ({seller}) => {
     <CardContent sx={{ textAlign: "center", mt: -6 }}>
       {/* Profile Image */}
       <Avatar
-        src={seller.images[0] ? `https://your-image-path.com/${seller.storelogo}` : "https://i.imgur.com/QXUb9Uy.jpg"}
-        alt={seller.ownername}
-        sx={{
-          width: 90,
-          height: 90,
-          border: "4px solid white",
-          mx: "auto",
-        }}
-      />
+  src={seller.images[0] ? `${BASE_URL}/uploads/${seller.storelogo}` : "https://i.imgur.com/QXUb9Uy.jpg"}
+  alt={seller.ownername}
+  sx={{
+    width: 90,
+    height: 90,
+    border: "4px solid white",
+    mx: "auto",
+  }}
+/>
 
       {/* Name & Badge */}
       <Typography variant="h6" fontWeight="bold" mt={1}>

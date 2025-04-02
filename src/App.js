@@ -62,6 +62,7 @@ import { RoleProtectedRoute } from "./Admin/Pages/RoleProtectedRoute";
 import { Button, Modal } from "react-bootstrap";
 import Shipping from "./Admin/Pages/Shipping";
 import Customers from "./Admin/Pages/Customers";
+import VendorLogin from "./Vendor/Auth/VendorLogin";
 const theme = createTheme({
   typography: {
     fontFamily: "Poppins, sans-serif",
@@ -93,7 +94,7 @@ const App = () => {
     navigate("/");
   };
 
-  const isLoginPage = location.pathname === "/";
+  const isLoginPage = location.pathname === "/" || location.pathname === "/vendor-login";
 
   return (
     <ThemeProvider theme={theme}>
@@ -127,6 +128,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/shipping" element={<Shipping />} />
+            <Route path="/vendor-login" element={<VendorLogin />} />
 
             <Route element={<RoleProtectedRoute allowedRoles={["admin"]} />}>
               <Route path="/home" element={<Dashboard />} />
@@ -175,6 +177,7 @@ const App = () => {
             <Route element={<RoleProtectedRoute allowedRoles={["vendor"]} />}>
               <Route path="/vendor-viewCategory" element={<ViewCategory />} />
               <Route path="/vendor-viewSub" element={<Viewsubcategory />} />
+
               <Route path="/vendor-coupon" element={<VendorCoupon />} />
               <Route path="/vendor-add-coupon" element={<AddVendorCoupon />} />
               <Route

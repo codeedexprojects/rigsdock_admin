@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import {  FilterList } from "@mui/icons-material";
 import { getvendorCategoriesApi } from "../../services/allApi";
+import { BASE_URL } from "../../services/baseUrl";
 
 const ViewCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -157,7 +158,7 @@ const ViewCategory = () => {
                 <Box display="flex" alignItems="center">
                   <CardMedia
                     component="img"
-                    image={item.image}
+                    image={`${BASE_URL}/uploads/${item.image}`}
                     alt={item.name}
                     sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
                   />
@@ -181,7 +182,7 @@ const ViewCategory = () => {
                       SUB CATEGORY
                     </Typography>
                     <Typography style={{ textAlign: "center" }}>
-                      <b>{item.name}</b>
+                      <b>{item.subCategoryCount || 'N/A'}</b>
                     </Typography>
                   </Box>
                   <Box>

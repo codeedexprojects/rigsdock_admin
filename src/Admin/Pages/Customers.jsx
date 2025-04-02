@@ -10,8 +10,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
-  Avatar,
   MenuItem,
   Pagination,
   Select,
@@ -19,7 +17,7 @@ import {
   Alert,
   Stack,
 } from "@mui/material";
-import { MoreVert, FilterList } from "@mui/icons-material";
+import {  FilterList } from "@mui/icons-material";
 import { format } from "date-fns";
 import {
  getCustomersApi
@@ -27,7 +25,6 @@ import {
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 
 const Customers = () => {
-  const [selected, setSelected] = useState([]);
   const [sort, setSort] = useState("Default");
   const [page, setPage] = useState(1);
   const [customers, setCustomers] = useState([]);
@@ -48,7 +45,7 @@ const Customers = () => {
   
       // Ensure response has the expected structure
       if (response.status === 200 && response.data) {
-        const customersData = response.data.data; // ✅ Correct way to extract data
+        const customersData = response.data; // ✅ Correct way to extract data
         setCustomers(customersData);
       } else {
         setError("Unexpected response format");
@@ -87,13 +84,7 @@ const Customers = () => {
   }, [searchQuery, sort, customers]);
   
 
-  const handleCheckboxChange = (id) => {
-    setSelected((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((item) => item !== id)
-        : [...prevSelected, id]
-    );
-  };
+ 
 
 
 
@@ -153,48 +144,40 @@ const Customers = () => {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>
-            <Checkbox />
-          </TableCell>
+          
           <TableCell>Seller Name</TableCell>
           <TableCell>#ID</TableCell>
           <TableCell>Email</TableCell>
           <TableCell>Phone</TableCell>
           <TableCell>Date</TableCell>
           <TableCell>Status</TableCell>
-          <TableCell>Actions</TableCell>
         </TableRow>
       </TableHead>
 
       <TableBody>
-  {paginatedRequests && paginatedRequests.length === 0 ? ( 
-    <Stack alignItems="center" justifyContent="center" spacing={1} sx={{ py: 3 }}>
-      <ReportProblemOutlinedIcon sx={{ fontSize: 40, color: "gray" }} />
-      <Typography variant="h6" color="textSecondary">
-        No Customers found
-      </Typography>
-    </Stack>
-  ) : (
+  {paginatedRequests && paginatedRequests.length > 0 ? (
     paginatedRequests.map((row) => (
       <TableRow key={row._id}>
-        <TableCell>
-          <Checkbox
-            checked={selected.includes(row._id)}
-            onChange={() => handleCheckboxChange(row._id)}
-          />
-        </TableCell>
-        <TableCell>{row.name}</TableCell> {/* ✅ Ensure "name" is used correctly */}
+       
+        <TableCell>{row.name}</TableCell>
+        <TableCell>{row._id}</TableCell> {/* Use row._id for the ID column */}
         <TableCell>{row.email}</TableCell>
         <TableCell>{row.mobileNumber}</TableCell>
         <TableCell>{format(new Date(row.createdAt), "MMMM d, yyyy h:mm a")}</TableCell>
         <TableCell>{row.status}</TableCell>
-        <TableCell>
-          <IconButton>
-            <MoreVert />
-          </IconButton>
-        </TableCell>
       </TableRow>
     ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={8}>
+        <Stack alignItems="center" justifyContent="center" spacing={1} sx={{ py: 3 }}>
+          <ReportProblemOutlinedIcon sx={{ fontSize: 40, color: "gray" }} />
+          <Typography variant="h6" color="textSecondary">
+            No Customers found
+          </Typography>
+        </Stack>
+      </TableCell>
+    </TableRow>
   )}
 </TableBody>
 

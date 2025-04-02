@@ -108,7 +108,7 @@ const EditProduct = () => {
           setExistingImages(
             product.images.map((img, index) => ({
               id: `existing-${index}`,
-              url: `${BASE_URL}/${img}`, // Ensure the correct image path
+              url: `${BASE_URL}/uploads/${img}`, // Ensure the correct image path
               name: `Image ${index + 1}`,
               size: "Unknown",
             }))

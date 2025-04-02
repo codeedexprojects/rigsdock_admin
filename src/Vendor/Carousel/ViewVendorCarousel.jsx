@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { PlusCircle, Edit2, Trash2, ExternalLink, Image } from "react-feather";
 import { createVenorCarouselApi, deleteVendorCarouselApi, editVendorCarouselApi, getVendorCarouselApi } from "../../services/allApi";
 import AddVendorCarousel from "./AddVendorCarousel";
+import { BASE_URL } from "../../services/baseUrl";
 
 const ViewVendorCarousel = () => {
   const [carouselItems, setCarouselItems] = useState([]);
@@ -106,10 +107,10 @@ const ViewVendorCarousel = () => {
               <div className="item-image-container">
                 {item.image ? (
                   <img
-                    src={item.image}
-                    alt={item.title}
-                    className="item-image"
-                  />
+                  src={item.image ? `${BASE_URL}/uploads/${item.image}` : "https://via.placeholder.com/150"}
+                  alt={item.title}
+                  className="item-image"
+                />
                 ) : (
                   <div className="no-image">
                     <Image size={40} />

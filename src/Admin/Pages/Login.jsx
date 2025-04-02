@@ -52,6 +52,7 @@ function Login() {
 
     try {
       const response = await adminLoginApi({ email, password });
+console.log(response);
 
       if (response.status === 200) {
         const { accessToken, refreshToken, admin } = response.data;

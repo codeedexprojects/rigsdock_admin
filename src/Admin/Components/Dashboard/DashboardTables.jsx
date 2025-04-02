@@ -18,7 +18,7 @@ import { styled } from "@mui/material/styles";
 import { MoreHoriz } from "@mui/icons-material";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getCustomersApi, getOrdersApi } from "../../../services/allApi";
 
 const TableContainer = styled(Box)({
@@ -80,7 +80,11 @@ const DashboardTables = () => {
 
     fetchOrders();
   }, []);
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate("/customers");
+  };
   return (
     <Box sx={{ display: "flex", gap: 3, px: 3, py: 2 }}>
       <TableContainer sx={{ flex: 2.5 }}>
@@ -198,7 +202,7 @@ const DashboardTables = () => {
               <Box>
                 <Typography variant="subtitle2">{customer.name}</Typography>
                 <Typography variant="caption" color="#9FA3A8">
-                {customer.id}
+                  {customer.id}
                 </Typography>
               </Box>
             </Box>
@@ -216,7 +220,11 @@ const DashboardTables = () => {
           </CustomerCard>
         ))}
 
-        <Button sx={{ mt: 2, color: "#0066CC" }} fullWidth>
+        <Button
+          onClick={handleClick}
+          sx={{ mt: 2, color: "#0066CC" }}
+          fullWidth
+        >
           VIEW MORE CUSTOMERS
         </Button>
       </TableContainer>
