@@ -177,9 +177,7 @@ const SellerRequests = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
+                
                 <TableCell>SI NO</TableCell>
 
                 <TableCell>Seller Name</TableCell>
@@ -204,15 +202,7 @@ const SellerRequests = () => {
                     "&:hover": { backgroundColor: "#F5F5F5" },
                   }}
                 >
-                  <TableCell>
-                    <Checkbox
-                      checked={selected.includes(row._id)}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        handleCheckboxChange(row._id);
-                      }}
-                    />
-                  </TableCell>
+               
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={2}>

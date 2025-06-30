@@ -25,7 +25,7 @@ import {
   updateCategoryApi,
 } from "../../../services/allApi";
 import { useParams, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../../services/baseUrl";
+import {  IMG_BASE_URL } from "../../../services/baseUrl";
 
 const EditCategoryPage = () => {
   const { id } = useParams();
@@ -45,6 +45,7 @@ const EditCategoryPage = () => {
   const [mainCategories, setMainCategories] = useState([]);
   const [selectedMainCategory, setSelectedMainCategory] = useState("");
   const [imageChanged, setImageChanged] = useState(false);
+  const [commissionPercentage,setCommissionPercentage] = useState("");
 
   // Fetch category details and main categories on component mount
   useEffect(() => {
@@ -53,18 +54,19 @@ const EditCategoryPage = () => {
       try {
         // Fetch current category data
         const categoryResponse = await getCategoryByIdApi(id);
-        console.log(categoryResponse);
+        // console.log(categoryResponse);
         
         if (categoryResponse.status === 200) {
           const categoryData = categoryResponse.data;
           setCategoryName(categoryData.name);
+          setCommissionPercentage(categoryData.commissionPercentage);
           setDescription(categoryData.description);
           setIsActive(categoryData.status === "active");
           setSelectedMainCategory(
             categoryData.maincategory._id || categoryData.maincategory
           );
           setPreviewImage(
-            categoryData.image ? `${BASE_URL}/uploads/${categoryData.image}` : "https://via.placeholder.com/120"
+            categoryData.image ? `${IMG_BASE_URL}/uploads/${categoryData.image}` : "https://via.placeholder.com/120"
           );
           
         } else {
@@ -111,6 +113,7 @@ const EditCategoryPage = () => {
 
     const formData = new FormData();
     formData.append("name", categoryName);
+    formData.append("commissionPercentage", commissionPercentage);
     formData.append("description", description);
     formData.append("maincategory", selectedMainCategory);
     formData.append("status", isActive ? "active" : "inactive");
@@ -225,7 +228,18 @@ const EditCategoryPage = () => {
                     onChange={(e) => setDescription(e.target.value)}
                   />
                 </Grid>
-
+  <Grid item xs={12}>
+                  <Typography variant="body1" fontWeight="bold" mb={1}>
+                    COMMISSION PERCENTAGE 
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    required
+                    value={commissionPercentage}
+                    onChange={(e) => setCommissionPercentage(e.target.value)}
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body1" fontWeight="bold" mb={1}>
                     MAIN CATEGORY

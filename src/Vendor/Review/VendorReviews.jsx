@@ -179,14 +179,19 @@ const VendorReviews = () => {
                 <Grid item xs={12} md={8}>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Avatar>
-                      {review.user.username.charAt(0).toUpperCase()}
+                      {review.user && review.user.username
+                        ? review.user.username.charAt(0).toUpperCase()
+                        : review.user.email.charAt(0).toUpperCase()}
                     </Avatar>
+
                     <div>
                       <Typography variant="subtitle1">
-                        {review.user.username}
+                        {review.user && review.user.username
+                          ? review.user.username
+                          : review.user.email}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {review.user.email}
+                        {review.user && review.user.email}
                       </Typography>
                     </div>
                   </Stack>
@@ -274,7 +279,7 @@ const VendorReviews = () => {
                       color="secondary"
                       size="small"
                       onClick={() => handleOpenModal("report", review)}
-                      disabled={review.report?.reason} 
+                      disabled={review.report?.reason}
                     >
                       {!review.report?.status ? "Reported" : "Report Review"}
                     </Button>

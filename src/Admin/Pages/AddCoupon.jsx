@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import "./addcoupon.css";
-import {
-  createcouponApi,
-  getCategoriesApi,
-  getproductsApi,
-  getSubCategoriesApi,
-} from "../../services/allApi";
-import moment from "moment";
 
-function AddCoupon() {
+
+import moment from "moment";
+import { createcouponApi, editCouponApi, getCategoriesApi, getproductsApi, getSubCategoriesApi } from "../../services/allApi";
+
+function AddCoupon({ couponToEdit, onSuccess }) {
   const [mainOptions] = useState(["Products", "Categories", "Subcategories"]);
   const [selectedMainOption, setSelectedMainOption] = useState("");
   const initialFormData = {
@@ -35,18 +31,75 @@ function AddCoupon() {
   const [fromDate, setFromDate] = useState("");
   const [selectedOptionId, setSelectedOptionId] = useState("");
   const [selectedTargetType, setSelectedTargetType] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const mapTargetTypeToMainOption = (targetType) => {
+    if (targetType === "Product") return "Products";
+    if (targetType === "Category") return "Categories";
+    if (targetType === "Subcategory") return "Subcategories";
+    return "";
+  };
+
+  // Initialize form for editing an existing coupon
+  useEffect(() => {
+    if (couponToEdit) {
+      setIsEditMode(true);
+      
+      // First get the main option based on target type
+      const mainOption = mapTargetTypeToMainOption(couponToEdit.targetType);
+      setSelectedMainOption(mainOption);
+      setSelectedTargetType(couponToEdit.targetType);
+      
+      // Fetch the relevant options list based on the target type
+      fetchData(mainOption).then(() => {
+        // Set the selected option ID after data is fetched
+        setSelectedOptionId(couponToEdit.target);
+      });
+      
+      // Format dates
+      const formattedFromDate = couponToEdit.validFrom ? 
+        moment(couponToEdit.validFrom).format("YYYY-MM-DD") : "";
+      const formattedToDate = couponToEdit.validTo ?
+        moment(couponToEdit.validTo).format("YYYY-MM-DD") : "";
+      
+      // Set dates for run length calculation
+      setFromDate(formattedFromDate);
+      setToDate(formattedToDate);
+      
+      // Update form data with coupon details
+      setFormData({
+        name: couponToEdit.name || "",
+        couponCode: couponToEdit.couponCode || "",
+        discountType: couponToEdit.discountType || "percentage",
+        discountValue: couponToEdit.discountValue || 0,
+        targetType: couponToEdit.targetType || "",
+        target: couponToEdit.target || "",
+        validFrom: formattedFromDate,
+        validTo: formattedToDate,
+        usageLimit: couponToEdit.usageLimit || "",
+        minPurchaseAmount: couponToEdit.minPurchaseAmount || "",
+        firstPurchaseOnly: couponToEdit.firstPurchaseOnly || false,
+      });
+      
+      // Calculate run length
+      if (formattedFromDate && formattedToDate) {
+        calculateRunLength(formattedFromDate, formattedToDate);
+      }
+    }
+  }, [couponToEdit]);
 
   const mapTargetType = (option) => {
     if (option === "Products") return "Product";
     if (option === "Categories") return "Category";
-    if (option === "Subcategories") return "Subcategory"; 
+    if (option === "Subcategories") return "Subcategory";
     return "";
   };
 
   const handleMainDropdownChange = (e) => {
     const selected = e.target.value;
     setSelectedMainOption(selected);
-    setSelectedTargetType(mapTargetType(selected)); 
+    setSelectedTargetType(mapTargetType(selected));
+    setSelectedOptionId(""); // Reset selected option when main category changes
 
     if (selected) {
       fetchData(selected);
@@ -83,9 +136,10 @@ function AddCoupon() {
         )})`
       );
     } else {
-      setRunLength(""); // Clear if invalid
+      setRunLength(""); 
     }
   };
+  
   const fetchData = async (type) => {
     try {
       let response;
@@ -96,23 +150,24 @@ function AddCoupon() {
         }
       } else if (type === "Categories") {
         response = await getCategoriesApi();
+        console.log("categories",response);
+        
         if (response && response.data) {
-          console.log(response);
-
           setCategories(response.data.categories);
         }
       } else if (type === "Subcategories") {
         response = await getSubCategoriesApi();
         if (response && response.data) {
           setSubcategories(response.data.subCategories);
-          console.log(response);
         }
       }
+      return response;
     } catch (error) {
       console.error(`Error fetching ${type}:`, error);
       if (type === "Products") setProducts([]);
       if (type === "Categories") setCategories([]);
       if (type === "Subcategories") setSubcategories([]);
+      return null;
     }
   };
 
@@ -142,8 +197,6 @@ function AddCoupon() {
       target: selectedOptionId,
     };
 
-    console.log("Updated Form Data Before Submission:", updatedFormData);
-
     if (moment(updatedFormData.validTo).isBefore(updatedFormData.validFrom)) {
       alert("End date must be after start date");
       return;
@@ -166,32 +219,42 @@ function AddCoupon() {
       );
       payload.append("firstPurchaseOnly", updatedFormData.firstPurchaseOnly);
 
-      // Debugging: Log payload values
-      for (let pair of payload.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
-      const response = await createcouponApi(payload);
-      if (response.data) {
-        alert("Coupon created successfully");
-        setFormData(initialFormData);
-        setRunLength("");
+      let response;
+      if (isEditMode && couponToEdit?._id) {
+        // Editing existing coupon
+        payload.append("couponId", couponToEdit._id);
+        response = await editCouponApi(payload);
+        if (response.data) {
+          alert("Coupon updated successfully");
+          if (onSuccess) onSuccess();
+        }
+      } else {
+        // Creating new coupon
+        response = await createcouponApi(payload);
+        if (response.data) {
+          alert("Coupon created successfully");
+          setFormData(initialFormData);
+          setRunLength("");
+          setSelectedMainOption("");
+          setSelectedOptionId("");
+          setSelectedTargetType("");
+          if (onSuccess) onSuccess();
+        }
       }
     } catch (error) {
-      console.error("Coupon creation failed:", error);
-      alert(error.response?.data?.message || "Coupon creation failed");
+      console.error(isEditMode ? "Coupon update failed:" : "Coupon creation failed:", error);
+      alert(error.response?.data?.message || (isEditMode ? "Coupon update failed" : "Coupon creation failed"));
     }
   };
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value, // Ensure checkbox is stored as boolean
+      [name]: type === "checkbox" ? checked : value,
     }));
-  
-    // Automatically calculate run length when dates are selected
+
     if (name === "validFrom") {
       setFromDate(value);
       if (formData.validTo) {
@@ -204,11 +267,16 @@ function AddCoupon() {
       }
     }
   };
-  
+
+  const handleCancel = () => {
+    if (onSuccess) onSuccess();
+  };
 
   return (
     <div className="coupon-container ">
-      <h3 className="mb-4 add-coupon-heading">Coupon Setting</h3>
+      <h3 className="mb-4 add-coupon-heading">
+        {isEditMode ? "Edit Coupon" : "Coupon Setting"}
+      </h3>
 
       <Form>
         {/* Section 1: Coupon Info */}
@@ -255,22 +323,21 @@ function AddCoupon() {
                   <Form.Select
                     className="addcoupon_form"
                     onChange={handleOptionChange}
+                    value={selectedOptionId}
                   >
                     <option value="">Select {selectedMainOption}</option>
                     {filteredOptions.map((option) => (
                       <option key={option._id} value={option._id}>
-                        {option.name} {/* Display name but store ID */}
+                        {option.name}
                       </option>
                     ))}
                   </Form.Select>
-                  ;
                 </Form.Group>
               </Col>
             )}
           </Row>
         </div>
 
-        {/* Section 2: Time Manage */}
         <div className="mb-4">
           <h5 className="add-coupon-subheading">
             <span className="add_coupon_sn">2</span> Time Manage
@@ -418,9 +485,16 @@ function AddCoupon() {
           </Row>
         </div>
       </Form>
-      <Button onClick={handleSubmit} variant="primary" type="submit">
-        Save Coupon
-      </Button>
+      <div className="d-flex gap-2">
+        <Button onClick={handleSubmit} variant="primary" type="submit">
+          {isEditMode ? "Update Coupon" : "Save Coupon"}
+        </Button>
+        {isEditMode && (
+          <Button onClick={handleCancel} variant="secondary">
+            Cancel
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ import {
   Avatar,
   Chip,
 } from "@mui/material";
-import { BASE_URL } from "../../../services/baseUrl";
+import { IMG_BASE_URL } from "../../../services/baseUrl";
 
 const OrderList = ({ order }) => {
   if (!order || !order.items) {
@@ -62,7 +62,7 @@ const OrderList = ({ order }) => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>PRODUCT</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>SKU</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>HSN</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>QTY</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>PRICE</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>TOTAL</TableCell>
@@ -76,7 +76,7 @@ const OrderList = ({ order }) => {
                       <Avatar
                         src={
                           item.product?.image
-                            ? `${BASE_URL}/uploads/${item.product.image}`
+                            ? `${IMG_BASE_URL}/uploads/${item.product.image}`
                             : "https://via.placeholder.com/40"
                         }
                         variant="square"
@@ -92,7 +92,7 @@ const OrderList = ({ order }) => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell>{item.sku || "N/A"}</TableCell>
+                  <TableCell>{item.HSN || "N/A"}</TableCell>
                   <TableCell>{item.quantity || 0}</TableCell>
                   <TableCell>{item.price || "$0.00"}</TableCell>
                   <TableCell>{item.price * item.quantity || "$0.00"}</TableCell>

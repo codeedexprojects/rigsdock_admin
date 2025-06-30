@@ -45,14 +45,15 @@ function Login() {
     return true;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
+    event.preventDefault(); 
     if (!validateInputs()) return;
 
     setLoading(true);
 
     try {
       const response = await adminLoginApi({ email, password });
-console.log(response);
+      console.log(response);
 
       if (response.status === 200) {
         const { accessToken, refreshToken, admin } = response.data;
@@ -71,7 +72,9 @@ console.log(response);
         throw new Error("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      setSnackbarMessage(err.message || "Something went wrong. Please try again later.");
+      setSnackbarMessage(
+        err.message || "Something went wrong. Please try again later."
+      );
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
@@ -83,7 +86,13 @@ console.log(response);
     <Container component="main" maxWidth="xs">
       <Paper
         elevation={6}
-        sx={{ padding: 4, borderRadius: 3, mt: 8, textAlign: "center", backgroundColor: "#f5f5f5" }}
+        sx={{
+          padding: 4,
+          borderRadius: 3,
+          mt: 8,
+          textAlign: "center",
+          backgroundColor: "#f5f5f5",
+        }}
       >
         <Box display="flex" flexDirection="column" alignItems="center">
           <LockIcon sx={{ fontSize: 50, color: "primary.main", mb: 1 }} />
@@ -92,7 +101,7 @@ console.log(response);
           </Typography>
         </Box>
 
-        <Box component="form" sx={{ mt: 2 }}>
+        <Box onSubmit={handleLogin} component="form" sx={{ mt: 2 }}>
           <TextField
             fullWidth
             label="Email Address"
@@ -125,7 +134,7 @@ console.log(response);
               fontWeight: "bold",
               background: "linear-gradient(135deg, #007BFF 30%, #0056D2 90%)",
             }}
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}

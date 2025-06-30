@@ -6,7 +6,7 @@ import {
 import { blue } from "@mui/material/colors";
 import moment from "moment";
 import { deleteNotificationApi } from "../../../services/allApi";
-import { BASE_URL } from "../../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../../services/baseUrl";
 function NotificationList({ notifications }) {
   return (
     <List sx={{ 
@@ -41,7 +41,7 @@ function NotificationList({ notifications }) {
               {/* Circular Avatar */}
               <ListItemAvatar>
                 <Avatar 
-                  src={`${BASE_URL}/uploads/${notification.image}`} 
+                  src={`${IMG_BASE_URL}/uploads/${notification.image}`} 
                   alt={notification.ownerId.ownername} 
                   sx={{ width: 36, height: 36 }}
                 />

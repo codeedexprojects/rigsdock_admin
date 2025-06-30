@@ -28,7 +28,7 @@ const AddEditSubCategoryModal = ({
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState("active");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -53,12 +53,13 @@ const AddEditSubCategoryModal = ({
 
         // Ensure category is set to its _id (Extracting ID properly)
         setCategory(subCategory.category?._id || "");
-        setStatus(subCategory.status ?? true); // Preserve status if editing, default to true
+        setStatus(subCategory.status || "active"); // Preserve status if editing, default to true
       } else {
         setName("");
         setDescription("");
         setCategory("");
-        setStatus(true);
+        setStatus("active");
+
       }
     }
   }, [open, subCategory, isEditing]);
@@ -158,14 +159,14 @@ const AddEditSubCategoryModal = ({
         </Select>
 
         <Select
-          fullWidth
-          value={status}
-          onChange={(e) => setStatus(e.target.value === "true")}
-          sx={{ mb: 2 }}
-        >
-          <MenuItem value={true}>Active</MenuItem>
-          <MenuItem value={false}>Inactive</MenuItem>
-        </Select>
+  fullWidth
+  value={status}
+  onChange={(e) => setStatus(e.target.value)}
+  sx={{ mb: 2 }}
+>
+  <MenuItem value="active">active</MenuItem>
+  <MenuItem value="inactive">inactive</MenuItem>
+</Select>
         {error && (
           <Typography color="error" mb={2}>
             {error}

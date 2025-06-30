@@ -32,8 +32,9 @@ import {
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { getproductsApi, deleteProductApi, bulkDeleteVendorProductsApi } from "../../../services/allApi";
-import { BASE_URL } from "../../../services/baseUrl";
+import { getproductsApi, bulkDeleteVendorProductsApi } from "../../../services/allApi";
+import {  IMG_BASE_URL } from "../../../services/baseUrl";
+import { useNavigate } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 // import AddIcon from "@mui/icons-material/Add";
 
@@ -108,6 +109,7 @@ const ViewProducts = () => {
     handleCloseDeleteModal();
   };
   
+  const navigate = useNavigate();
 
   // Fetch products from API
   useEffect(() => {
@@ -144,7 +146,7 @@ const ViewProducts = () => {
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchTerm.toLowerCase())
+      product.category?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleSelectProduct = (productId) => {
     setSelectedProductIds((prev) =>
@@ -465,7 +467,8 @@ const ViewProducts = () => {
                       },
                       transition: "background-color 0.2s ease",
                     }}
-                    // onClick={() => navigate(`/products/edit/${product._id}`)} 
+                    onClick={() => navigate(`/singleproduct/${product._id}`)}
+ 
                   >
                     <TableCell
                       padding="checkbox"
@@ -482,7 +485,7 @@ const ViewProducts = () => {
                         <Avatar
                           src={
                             product.images && product.images.length > 0
-                              ? `${BASE_URL}/uploads/${product.images[0]}`
+                              ? `${IMG_BASE_URL}/uploads/${product.images[0]}`
                               : ""
                           }
                           variant="rounded"

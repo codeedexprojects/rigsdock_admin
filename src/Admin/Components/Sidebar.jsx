@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Badge,
+  // Badge,
   Box,
   Collapse,
 } from "@mui/material";
@@ -16,7 +16,7 @@ import {
   Group,
   ShoppingCart,
   Inventory,
-  AccountBalance,
+  // AccountBalance,
   Person,
   Settings,
   Assessment,
@@ -292,6 +292,17 @@ const Sidebar = ({ onSelect }) => {
 
               <Collapse in={openCategories} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
+                <StyledListItem
+                    onClick={() => handleSelect("/maincategory")}
+                    button
+                    level={1}
+                    active={activeSection === "/maincategory"}
+                  >
+                    <ListItemIcon>
+                      <ViewList />
+                    </ListItemIcon>
+                    <ListItemText primary="Main Categories" />
+                  </StyledListItem>
                   <StyledListItem
                     onClick={() => handleSelect("/viewCategory")}
                     button
@@ -380,7 +391,7 @@ const Sidebar = ({ onSelect }) => {
                 <ListItemText primary="Account Analysis" />
               </StyledListItem> */}
 
-              <StyledListItem
+              {/* <StyledListItem
                 onClick={() => handleSelect("/profile")}
                 button
                 active={activeSection === "/profile"}
@@ -389,7 +400,7 @@ const Sidebar = ({ onSelect }) => {
                   <Person />
                 </ListItemIcon>
                 <ListItemText primary="Profile" />
-              </StyledListItem>
+              </StyledListItem> */}
             </List>
           </Box>
 
@@ -403,16 +414,17 @@ const Sidebar = ({ onSelect }) => {
           <Box sx={{ px: 2, mt: 3 }}>
             <SectionTitle>Insights</SectionTitle>
             <List>
-              <StyledListItem
-                onClick={() => handleSelect("/reports")}
+
+            <StyledListItem
+                onClick={() => handleSelect("/report")}
                 button
-                active={activeSection === "/reports"}
+                active={activeSection === "/report"}
               >
                 <ListItemIcon>
                   <Assessment />
                 </ListItemIcon>
-                <ListItemText primary="Reports" />
-                <Badge
+                <ListItemText primary=" Reports" />
+                {/* <Badge
                   badgeContent={18}
                   sx={{
                     "& .MuiBadge-badge": {
@@ -421,7 +433,27 @@ const Sidebar = ({ onSelect }) => {
                       fontWeight: "bold",
                     },
                   }}
-                />
+                /> */}
+              </StyledListItem>
+              <StyledListItem
+                onClick={() => handleSelect("/reports")}
+                button
+                active={activeSection === "/reports"}
+              >
+                <ListItemIcon>
+                  <Assessment />
+                </ListItemIcon>
+                <ListItemText primary="Review Reports" />
+                {/* <Badge
+                  badgeContent={18}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#4E95F2",
+                      color: "white",
+                      fontWeight: "bold",
+                    },
+                  }}
+                /> */}
               </StyledListItem>
 
               <StyledListItem onClick={() => setOpenNotification(true)} button>
@@ -429,7 +461,7 @@ const Sidebar = ({ onSelect }) => {
                   <Notifications />
                 </ListItemIcon>
                 <ListItemText primary="Notifications" />
-                <Badge
+                {/* <Badge
                   badgeContent={9}
                   sx={{
                     "& .MuiBadge-badge": {
@@ -438,7 +470,7 @@ const Sidebar = ({ onSelect }) => {
                       fontWeight: "bold",
                     },
                   }}
-                />
+                /> */}
               </StyledListItem>
               <LatestNotification
                 open={openNotification}
@@ -614,7 +646,7 @@ const Sidebar = ({ onSelect }) => {
 
               <Collapse in={openManagingTools} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <StyledListItem
+                  {/* <StyledListItem
                     onClick={() => handleSelect("/vendor-carousel")}
                     button
                     level={1}
@@ -624,7 +656,7 @@ const Sidebar = ({ onSelect }) => {
                       <ViewList />
                     </ListItemIcon>
                     <ListItemText primary="Carousel" />
-                  </StyledListItem>
+                  </StyledListItem> */}
 
                   <StyledListItem
                     onClick={() => handleSelect("/vendor-dealsoftheday")}
@@ -738,7 +770,7 @@ const Sidebar = ({ onSelect }) => {
           <Box sx={{ px: 2, mt: 3 }}>
             <SectionTitle>Insights</SectionTitle>
             <List>
-              <StyledListItem
+              {/* <StyledListItem
                 onClick={() => handleSelect("/vendor-reports")}
                 button
                 active={activeSection === "/vendor-reports"}
@@ -757,7 +789,7 @@ const Sidebar = ({ onSelect }) => {
                     },
                   }}
                 />
-              </StyledListItem>
+              </StyledListItem> */}
 
               <StyledListItem
                 onClick={() => handleSelect("/vendor-review")}
@@ -768,7 +800,7 @@ const Sidebar = ({ onSelect }) => {
                   <Assessment />
                 </ListItemIcon>
                 <ListItemText primary="Review" />
-                <Badge
+                {/* <Badge
                   badgeContent={18}
                   sx={{
                     "& .MuiBadge-badge": {
@@ -777,7 +809,7 @@ const Sidebar = ({ onSelect }) => {
                       fontWeight: "bold",
                     },
                   }}
-                />
+                /> */}
               </StyledListItem>
 
               <StyledListItem onClick={() => setOpenNotification(true)} button>
@@ -785,7 +817,7 @@ const Sidebar = ({ onSelect }) => {
                   <Notifications />
                 </ListItemIcon>
                 <ListItemText primary="Notifications" />
-                <Badge
+                {/* <Badge
                   badgeContent={9}
                   sx={{
                     "& .MuiBadge-badge": {
@@ -794,7 +826,7 @@ const Sidebar = ({ onSelect }) => {
                       fontWeight: "bold",
                     },
                   }}
-                />
+                /> */}
               </StyledListItem>
               <LatestVendorNotification
                 open={openNotification}

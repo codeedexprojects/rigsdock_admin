@@ -63,6 +63,9 @@ import { Button, Modal } from "react-bootstrap";
 import Shipping from "./Admin/Pages/Shipping";
 import Customers from "./Admin/Pages/Customers";
 import VendorLogin from "./Vendor/Auth/VendorLogin";
+import SingleProduct from "./Admin/Components/Products/SingleProduct";
+import SingleCustomer from "./Admin/Pages/SingleCustomer";
+import Reports from "./Admin/Pages/Reports";
 const theme = createTheme({
   typography: {
     fontFamily: "Poppins, sans-serif",
@@ -147,8 +150,15 @@ const App = () => {
                 path="/maincategory"
                 element={<MainCategoryManagement />}
               />
+               <Route
+                path="/singleproduct/:id"
+                element={<SingleProduct />}
+              />
+              
               <Route path="/edit-category/:id" element={<EditCategoryPage />} />
               <Route path="/sellerRequest" element={<SellerRequests />} />
+              <Route path="/singlecustomer/:id" element={<SingleCustomer />} />
+
               <Route
                 path="/seller-ProfileRequest"
                 element={<SellerProfileRequest />}
@@ -168,6 +178,8 @@ const App = () => {
               <Route path="/dealsoftheday" element={<DealOftheDay />} />
               <Route path="/adddeal" element={<AddDeal />} />
               <Route path="/customers" element={<Customers />} />
+              <Route path="/report" element={<Reports />} />
+
 
               <Route path="/admin-chat/:sellerId" element={<AdminChatPage />} />
               <Route path="/reports" element={<AdminReport />} />

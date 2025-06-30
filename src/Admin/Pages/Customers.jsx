@@ -23,6 +23,7 @@ import {
  getCustomersApi
 } from "../../services/allApi";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
+import { useNavigate } from "react-router-dom";
 
 const Customers = () => {
   const [sort, setSort] = useState("Default");
@@ -34,6 +35,7 @@ const Customers = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [rowsPerPage] = useState(5);
+  const navigate = useNavigate();
 
 
   const fetchCustomers = async () => {
@@ -145,7 +147,7 @@ const Customers = () => {
       <TableHead>
         <TableRow>
           
-          <TableCell>Seller Name</TableCell>
+          <TableCell>Name</TableCell>
           <TableCell>#ID</TableCell>
           <TableCell>Email</TableCell>
           <TableCell>Phone</TableCell>
@@ -157,7 +159,8 @@ const Customers = () => {
       <TableBody>
   {paginatedRequests && paginatedRequests.length > 0 ? (
     paginatedRequests.map((row) => (
-      <TableRow key={row._id}>
+      <TableRow             onClick={() => navigate(`/singlecustomer/${row._id}`)} 
+      key={row._id}>
        
         <TableCell>{row.name}</TableCell>
         <TableCell>{row._id}</TableCell> {/* Use row._id for the ID column */}

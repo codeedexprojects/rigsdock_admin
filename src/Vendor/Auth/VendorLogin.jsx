@@ -45,7 +45,8 @@ function VendorLogin() {
     return true;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
+event.preventDefault();
     if (!validateInputs()) return;
 
     setLoading(true);
@@ -93,7 +94,7 @@ console.log(response);
           </Typography>
         </Box>
 
-        <Box component="form" sx={{ mt: 2 }}>
+        <Box onSubmit={handleLogin} component="form" sx={{ mt: 2 }}>
           <TextField
             fullWidth
             label="Email Address"
@@ -126,7 +127,7 @@ console.log(response);
               fontWeight: "bold",
               background: "linear-gradient(135deg, #007BFF 30%, #0056D2 90%)",
             }}
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}

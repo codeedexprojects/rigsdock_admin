@@ -34,7 +34,7 @@ const StatCard = ({ icon, title, value, change, changeType }) => {
         <Typography variant="h5" fontWeight="bold">
           {value}
         </Typography>
-        <Box
+        {/* <Box
           component="span"
           sx={{
             fontSize: "0.9rem",
@@ -48,13 +48,13 @@ const StatCard = ({ icon, title, value, change, changeType }) => {
           }}
         >
           {change}
-        </Box>
+        </Box> */}
       </CardContent>
     </Card>
   );
 };
 
-const DashboardStats = () => {
+const DashboardStats = ({seller}) => {
   return (
     <Box
       sx={{
@@ -67,23 +67,19 @@ const DashboardStats = () => {
       <StatCard
         icon={<Wallet sx={{ color: "green" }} />}
         title="Total Balance"
-        value="$723.00"
-        change="-25%"
-        changeType="negative"
+        value={seller.totalBalance}
       />
       <StatCard
         icon={<ShoppingCart sx={{ color: "orange" }} />}
         title="Total Orders"
-        value="1,296"
-        change="+10%"
-        changeType="positive"
+        value={seller.totalOrders}
+       
       />
       <StatCard
         icon={<Settings sx={{ color: "blue" }} />}
-        title="Rewards Point"
-        value="1400"
-        change="+10%"
-        changeType="positive"
+        title="Settled amount"
+        value={seller.totalSettledAmount}
+        
       />
     </Box>
   );

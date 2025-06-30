@@ -11,7 +11,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import io from "socket.io-client";
 import axios from "axios";
-import { BASE_URL } from "../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../services/baseUrl";
 import { useParams } from "react-router-dom";
 
 const socket = io(`${BASE_URL}`);
@@ -61,7 +61,7 @@ const AdminChatPage = () => {
       try {
         const token = localStorage.getItem("rigsdock_accessToken");
         const response = await axios.get(
-          `${BASE_URL}/admin/chat/history/${vendorId}`,
+          `${IMG_BASE_URL}/admin/chat/history/${vendorId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

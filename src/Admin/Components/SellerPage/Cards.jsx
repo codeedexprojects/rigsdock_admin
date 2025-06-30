@@ -12,7 +12,7 @@ import { FaStar } from "react-icons/fa6";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../../services/baseUrl";
 
 const StyledCard = styled(Card)({
   height: "100%",
@@ -39,7 +39,7 @@ const Cards = ({ sellers }) => {
                 <Box sx={{ display: "flex", gap: 2 }}>
                 <Avatar
   sx={{ width: 48, height: 48, borderRadius: "12px" }}
-  src={seller.images[0] ? `${BASE_URL}/uploads/${seller.images[0]}` : undefined}
+  src={seller.images[0] ? `${IMG_BASE_URL}/uploads/${seller.images[0]}` : undefined}
 >
   {!seller.images[0] && seller.ownername?.charAt(0)}
 </Avatar>

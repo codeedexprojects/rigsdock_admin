@@ -27,6 +27,7 @@ import {
 import OfferModal from "./OfferModal";
 import { deleteVendorOfferApi, getVendorOfferApi } from "../../services/allApi";
 import { toast, ToastContainer } from "react-toastify";
+import dayjs from "dayjs";
 
 function ViewOffer() {
   const [offers, setOffers] = useState([]);
@@ -99,7 +100,10 @@ function ViewOffer() {
           ...prevOffers,
           {
             ...updatedOffer,
-            id: prevOffers.length > 0 ? Math.max(...prevOffers.map((o) => o.id)) + 1 : 1,
+            id:
+              prevOffers.length > 0
+                ? Math.max(...prevOffers.map((o) => o.id)) + 1
+                : 1,
           },
         ];
       } else {
@@ -108,10 +112,9 @@ function ViewOffer() {
         );
       }
     });
-  
+
     setOpenModal({ open: false });
   };
-  
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -137,7 +140,12 @@ function ViewOffer() {
       </Box>
 
       {loading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="50vh"
+        >
           <CircularProgress />
         </Box>
       ) : offers.length === 0 ? (
@@ -197,7 +205,8 @@ function ViewOffer() {
                       {offer.discountType === "percentage" ? "%" : "USD"}
                     </Typography>
                     <Typography variant="body2">
-                      Valid: {offer.validFrom} to {offer.validTo}
+                      Valid: {dayjs(offer.validFrom).format("DD MMM YYYY")} to{" "}
+                      {dayjs(offer.validTo).format("DD MMM YYYY")}
                     </Typography>
                   </Box>
 
@@ -261,7 +270,7 @@ function ViewOffer() {
         onClose={() => setOpenModal({ open: false })}
         mode={openModal.mode}
         offer={selectedOffer}
-        setOffer={setSelectedOffer} // Ensure offer state updates in edit mode
+        setOffer={setSelectedOffer}
         onSave={handleSaveOffer}
       />
       <ToastContainer></ToastContainer>

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import moment from "moment";
-import { BASE_URL } from "../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../services/baseUrl";
 function VendorNotification({ notifications }) {
   return (
     <List
@@ -55,7 +55,7 @@ function VendorNotification({ notifications }) {
                 <Avatar
                   src={
                     notification.image
-                      ? `${BASE_URL}/uploads/${notification.image}`
+                      ? `${IMG_BASE_URL}/uploads/${notification.image}`
                       : "https://via.placeholder.com/36"
                   }
                   alt={notification.ownerId?.ownername || "User"}

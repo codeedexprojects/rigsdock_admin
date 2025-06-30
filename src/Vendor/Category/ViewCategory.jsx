@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import {  FilterList } from "@mui/icons-material";
 import { getvendorCategoriesApi } from "../../services/allApi";
-import { BASE_URL } from "../../services/baseUrl";
+import { IMG_BASE_URL } from "../../services/baseUrl";
 
 const ViewCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -152,56 +152,111 @@ const ViewCategory = () => {
       )}
       {!loading && !error && paginatedCategories.length > 0 && (
         <Grid container spacing={3}>
-          {paginatedCategories.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card sx={{ p: 2 }}>
-                <Box display="flex" alignItems="center">
-                  <CardMedia
-                    component="img"
-                    image={`${BASE_URL}/uploads/${item.image}`}
-                    alt={item.name}
-                    sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
-                  />
-                  <Box>
-                    <Typography variant="h6" fontWeight={600}>
-                      {item.name}
-                    </Typography>
-                    <Typography color="primary">{item._id}</Typography>
-                    <Typography variant="body2" mt={1}>
-                      {item.description}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box display="flex" justifyContent="space-between" mt={2}>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      color="#9FA3A8"
-                      fontWeight={600}
-                    >
-                      SUB CATEGORY
-                    </Typography>
-                    <Typography style={{ textAlign: "center" }}>
-                      <b>{item.subCategoryCount || 'N/A'}</b>
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      color="#9FA3A8"
-                      fontWeight={600}
-                    >
-                      STATUS
-                    </Typography>
-                    <Typography>
-                      <b>{item.status}</b>
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box display="flex" gap={1} mt={2}></Box>
-              </Card>
-            </Grid>
-          ))}
+       {paginatedCategories.map((item, index) => (
+  <Grid item xs={12} sm={6} md={6} key={index}>
+    <Card sx={{ 
+      p: 2, 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+      borderRadius: 2,
+      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 10px 20px rgba(0,0,0,0.12)'
+      }
+    }}>
+      <Box display="flex" alignItems="flex-start" mb={2}>
+        <CardMedia
+          component="img"
+          image={`${IMG_BASE_URL}/uploads/${item.image}`}
+          alt={item.name}
+          sx={{ 
+            width: 100, 
+            height: 100, 
+            borderRadius: 2, 
+            mr: 2,
+            objectFit: 'cover',
+            border: '1px solid #f0f0f0'
+          }}
+        />
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h6" fontWeight={600} sx={{ mb: 0.5 }}>
+            {item.name}
+          </Typography>
+          <Typography color="primary" variant="body2" sx={{ mb: 1 }}>
+            {item._id}
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.4 }}>
+            {item.description}
+          </Typography>
+        </Box>
+      </Box>
+      
+      <Box sx={{ mt: 'auto', pt: 2, borderTop: '1px solid #f0f0f0' }}>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+                mb={0.5}
+              >
+                MAIN CATEGORY
+              </Typography>
+              <Typography variant="body2" fontWeight={600}>
+                {item.maincategory.name || 'N/A'}
+              </Typography>
+            </Box>
+          </Grid>
+          
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+                mb={0.5}
+              >
+                SUBCATEGORIES
+              </Typography>
+              <Typography variant="body2" fontWeight={600}>
+                {item.subcategoryCount || '0'}
+              </Typography>
+            </Box>
+          </Grid>
+          
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+                mb={0.5}
+              >
+                STATUS
+              </Typography>
+              <Typography 
+                variant="body2" 
+                fontWeight={600}
+                sx={{
+                  color: item.status === 'Active' ? '#4caf50' : '#ff9800'
+                }}
+              >
+                {item.status}
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </Card>
+  </Grid>
+))}
         </Grid>
       )}
       {!loading && !error && paginatedCategories.length > 0 && (

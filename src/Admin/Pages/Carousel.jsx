@@ -11,7 +11,7 @@ import {
   getCarouselApi,
 } from "../../services/allApi";
 import { PlusCircle, Edit2, Trash2, ExternalLink, Image } from "react-feather";
-import { BASE_URL } from "../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../services/baseUrl";
 
 const Carousel = () => {
   const [carouselItems, setCarouselItems] = useState([]);
@@ -20,53 +20,60 @@ const Carousel = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCarousel = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getCarouselApi();
-
-        if (response.status === 200) {
-          setCarouselItems(response.data);
-        }
-      } catch (error) {
-        toast.error("Failed to load carousel items");
-        console.error("Error fetching carousel items", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchCarousel();
   }, []);
+
+  const fetchCarousel = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getCarouselApi();
+console.log(response);
+
+      if (response.status === 200) {
+        setCarouselItems(response.data);
+      }
+    } catch (error) {
+      toast.error("Failed to load carousel items");
+      console.error("Error fetching carousel items", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async (formData) => {
     try {
       let response;
-      if (formData.get("_id")) {
-        response = await editCarouselApi(formData.get("_id"), formData);
+      const itemId = formData.get("_id");
+      
+      if (itemId) {
+        // For edit operations
+        response = await editCarouselApi(itemId, formData);
       } else {
+        // For create operations
         response = await createCarouselApi(formData);
       }
 
       if (response.status === 200 || response.status === 201) {
         toast.success(
-          `Carousel ${formData.get("_id") ? "updated" : "added"} successfully!`
+          `Carousel ${itemId ? "updated" : "added"} successfully!`
         );
-        setCarouselItems((prev) =>
-          formData.get("_id")
-            ? prev.map((d) =>
-                d._id === formData.get("_id") ? response.data : d
-              )
-            : [...prev, response.data]
-        );
+        
+        // Refresh the carousel items to ensure we have the latest data
+        fetchCarousel();
+        
+        setShowModal(false);
+        setSelectedItem(null);
       } else {
-        toast.error("Failed to save carousel");
+        toast.error(response.message || "Failed to save carousel");
       }
     } catch (error) {
       console.error("Error saving carousel item:", error);
-      toast.error("Something went wrong!");
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong!");
+      }
     }
-
-    setShowModal(false);
   };
 
   const handleDelete = async (id) => {
@@ -92,7 +99,10 @@ const Carousel = () => {
         <Button
           variant="primary"
           className="add-btn"
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setSelectedItem(null);
+            setShowModal(true);
+          }}
         >
           <PlusCircle size={16} className="me-2" />
           Add New Slide
@@ -112,11 +122,11 @@ const Carousel = () => {
             <div key={item._id} className="carousel-item-card">
               <div className="item-image-container">
                 {item.image ? (
-                 <img
-                 src={item.image ? `${BASE_URL}/uploads/${item.image}` : "https://via.placeholder.com/150"}
-                 alt={item.title}
-                 className="item-image"
-               />
+                  <img
+                    src={`${IMG_BASE_URL}/uploads/${item.image}`}
+                    alt={item.title}
+                    className="item-image"
+                  />
                 ) : (
                   <div className="no-image">
                     <Image size={40} />

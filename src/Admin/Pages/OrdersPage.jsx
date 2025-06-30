@@ -15,13 +15,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
+  // Checkbox,
   Chip,
   CircularProgress,
 } from "@mui/material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+// import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Paginations from "../Components/SellerPage/Paginations";
 import { getOrdersApi } from "../../services/allApi";
 import { useNavigate } from "react-router-dom";
@@ -37,15 +37,15 @@ const OrdersPage = () => {
   const itemsPerPage = 8;
   const navigate = useNavigate();
 
-  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedRows, setSelectedRows] = useState([]);
 
-  const handleRowClick = (orderId) => {
-    setSelectedRows((prev) =>
-      prev.includes(orderId)
-        ? prev.filter((item) => item !== orderId)
-        : [...prev, orderId]
-    );
-  };
+  // const handleRowClick = (orderId) => {
+  //   setSelectedRows((prev) =>
+  //     prev.includes(orderId)
+  //       ? prev.filter((item) => item !== orderId)
+  //       : [...prev, orderId]
+  //   );
+  // };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -68,13 +68,13 @@ const OrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const handleSelectAll = (event) => {
-    if (event.target.checked) {
-      setSelectedRows(filteredOrders.map((order) => order._id));
-    } else {
-      setSelectedRows([]);
-    }
-  };
+  // const handleSelectAll = (event) => {
+  //   if (event.target.checked) {
+  //     setSelectedRows(filteredOrders.map((order) => order._id));
+  //   } else {
+  //     setSelectedRows([]);
+  //   }
+  // };
 
   useEffect(() => {
     let result = [...orders];
@@ -337,8 +337,8 @@ const OrdersPage = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#F4F4F4" }}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
+                  {/* <TableCell padding="checkbox"> */}
+                  {/* <Checkbox
                       checked={
                         selectedRows.length === currentItems.length &&
                         currentItems.length > 0
@@ -348,8 +348,8 @@ const OrdersPage = () => {
                         selectedRows.length < currentItems.length
                       }
                       onChange={handleSelectAll}
-                    />
-                  </TableCell>
+                    /> */}
+                  {/* </TableCell> */}
                   <TableCell sx={{ color: "#212B36", fontWeight: "bold" }}>
                     ORDER NUMBER
                   </TableCell>
@@ -396,6 +396,15 @@ const OrdersPage = () => {
                       fontWeight: "bold",
                     }}
                   >
+                    VENDOR AMOUNT
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                      color: "#212B36",
+                      fontWeight: "bold",
+                    }}
+                  >
                     PAYMENT STATUS
                   </TableCell>
                   <TableCell
@@ -434,7 +443,7 @@ const OrdersPage = () => {
                         cursor: "pointer",
                       }}
                     >
-                      <TableCell
+                      {/* <TableCell
                         padding="checkbox"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -448,12 +457,12 @@ const OrdersPage = () => {
                             handleRowClick(order._id);
                           }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell component="th" scope="row">
                         {order._id.slice(0, 10)}...
                       </TableCell>
                       <TableCell sx={{ textAlign: "center" }}>
-                      {order?.user?.name || "N/A"}
+                        {order?.user?.name || "N/A"}
                       </TableCell>
                       <TableCell sx={{ textAlign: "center" }}>
                         {formatDate(order.createdAt)}
@@ -462,7 +471,29 @@ const OrdersPage = () => {
                         {order.items?.length ?? 0}
                       </TableCell>
                       <TableCell sx={{ color: "#0A5FBF", textAlign: "center" }}>
-                        {Number(order.totalPrice).toFixed(2)}
+                        Rs.{Number(order.totalPrice).toFixed(2)}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Typography sx={{ color: "#0A5FBF" }}>
+                            Rs.{order.totalVendorAmount}
+                          </Typography>
+                          <Typography sx={{ mx: 0.5 }}>-</Typography>
+                          <Typography
+                            sx={{
+                              color: order.settled ? "#2E7D32" : "#D32F2F",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {order.settled ? "Settled" : "Not Settled"}
+                          </Typography>
+                        </Box>
                       </TableCell>
                       <TableCell sx={{ textAlign: "center" }}>
                         <Chip
@@ -476,7 +507,7 @@ const OrdersPage = () => {
                           }}
                         />
                       </TableCell>
-                      
+
                       <TableCell sx={{ textAlign: "center" }}>
                         <Chip
                           label={order.orderStatus}
@@ -488,14 +519,6 @@ const OrdersPage = () => {
                             height: 35,
                           }}
                         />
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreHorizIcon />
-                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))

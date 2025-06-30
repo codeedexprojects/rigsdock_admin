@@ -55,8 +55,8 @@ const ViewVendororder = () => {
         const response = await getvendorOrdersApi();
         console.log(response);        
         if (response.status === 200) {
-          setOrders(response.data);
-          setFilteredOrders(response.data);
+          setOrders(response.data.orders);
+          setFilteredOrders(response.data.orders);
         }
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -78,11 +78,11 @@ const ViewVendororder = () => {
   };
 
   useEffect(() => {
-    let result = [...orders];
-    
+    let result = Array.isArray(orders) ? [...orders] : []; // Ensure it's an array
+  
     if (filterBy !== "all") {
       const today = new Date();
-      
+  
       if (filterBy === "today") {
         const todayStr = today.toDateString();
         result = result.filter(order => new Date(order.createdAt).toDateString() === todayStr);
@@ -102,17 +102,17 @@ const ViewVendororder = () => {
         result = result.filter(order => order.paymentStatus === "Cancelled");
       }
     }
-    
+  
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
-        order => 
-          order._id.toLowerCase().includes(query) || 
-          order.user.email.toLowerCase().includes(query) || 
+        order =>
+          order._id.toLowerCase().includes(query) ||
+          order.user.email.toLowerCase().includes(query) ||
           order.orderStatus.toLowerCase().includes(query)
       );
     }
-    
+  
     if (sortBy === "date-newest") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortBy === "date-oldest") {
@@ -122,14 +122,16 @@ const ViewVendororder = () => {
     } else if (sortBy === "price-lowest") {
       result.sort((a, b) => a.totalPrice - b.totalPrice);
     }
-    
+  
     setFilteredOrders(result);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   }, [orders, searchQuery, filterBy, sortBy]);
+  
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = Array.isArray(filteredOrders) ? filteredOrders.slice(indexOfFirstItem, indexOfLastItem) : [];
+  
 
   const getStatusChipColor = (orderStatus) => {
     switch (orderStatus) {
@@ -328,7 +330,7 @@ const ViewVendororder = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#F4F4F4" }}>
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox
                       checked={selectedRows.length === currentItems.length && currentItems.length > 0}
                       indeterminate={
@@ -337,7 +339,7 @@ const ViewVendororder = () => {
                       }
                       onChange={handleSelectAll}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell sx={{ color: "#212B36", fontWeight: "bold" }}>
                     ORDER NUMBER
                   </TableCell>
@@ -386,7 +388,15 @@ const ViewVendororder = () => {
                   >
                     STATUS
                   </TableCell>
-                  <TableCell></TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                      color: "#212B36",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    PAYMENT STATUS
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -413,7 +423,7 @@ const ViewVendororder = () => {
                         cursor: "pointer"
                       }}
                     >
-                      <TableCell
+                      {/* <TableCell
                         padding="checkbox"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -427,7 +437,7 @@ const ViewVendororder = () => {
                             handleRowClick(order._id);
                           }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell component="th" scope="row">
                         {order._id.slice(0, 10)}...
                       </TableCell>
@@ -448,6 +458,18 @@ const ViewVendororder = () => {
                           label={order.orderStatus}
                           size="medium"
                           sx={{
+                            ...getStatusChipColor(order.orderStatus),
+                            borderRadius: 1,
+                            width: 98,
+                            height: 35,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <Chip
+                          label={order.paymentStatus}
+                          size="medium"
+                          sx={{
                             ...getStatusChipColor(order.paymentStatus),
                             borderRadius: 1,
                             width: 98,
@@ -455,11 +477,7 @@ const ViewVendororder = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell>
-                        <IconButton size="small" onClick={(e) => e.stopPropagation()}>
-                          <MoreHorizIcon />
-                        </IconButton>
-                      </TableCell>
+                      
                     </TableRow>
                   ))
                 )}

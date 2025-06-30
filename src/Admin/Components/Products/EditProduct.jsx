@@ -31,7 +31,7 @@ import {
   deleteProductImageApi,
 } from "../../../services/allApi";
 import { useParams, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../../services/baseUrl";
 
 const EditProduct = () => {
   const { productId } = useParams();
@@ -108,7 +108,7 @@ const EditProduct = () => {
           setExistingImages(
             product.images.map((img, index) => ({
               id: `existing-${index}`,
-              url: `${BASE_URL}/uploads/${img}`, // Ensure the correct image path
+              url: `${IMG_BASE_URL}/uploads/${img}`, // Ensure the correct image path
               name: `Image ${index + 1}`,
               size: "Unknown",
             }))

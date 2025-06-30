@@ -37,9 +37,10 @@ export const createMainCategoryApi = async (categoryData) => {
   }
 
   try {
+    // For FormData, don't set Content-Type header - browser will set it with boundary
     const response = await commonApi("POST", url, categoryData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      // Don't set Content-Type for FormData with files
     });
     return response;
   } catch (error) {
@@ -59,9 +60,10 @@ export const updateMainCategoryApi = async (id, categoryData) => {
   }
 
   try {
-    const response = await commonApi("PUT", url, categoryData, {
+    // For FormData, don't set Content-Type header - browser will set it with boundary
+    const response = await commonApi("PATCH", url, categoryData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      // Don't set Content-Type for FormData with files
     });
     return response;
   } catch (error) {
@@ -168,10 +170,17 @@ export const deleteCategoryApi = async (id) => {
   }
 
   try {
-    const response = await commonApi("DELETE", url, null, {
-      Authorization: `Bearer ${accessToken}`,
+    const response = await fetch(url, {
+      method: "DELETE",
+      mode: "cors", // Ensure CORS mode
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
     });
-    return response;
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     return {
       success: false,
@@ -179,6 +188,7 @@ export const deleteCategoryApi = async (id) => {
     };
   }
 };
+
 export const getCategoriesApi = async () => {
   const url = `${BASE_URL}/admin/category/view`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");
@@ -319,17 +329,25 @@ export const deleteSubCategoryApi = async (id) => {
   }
 
   try {
-    const response = await commonApi("DELETE", url, null, {
-      Authorization: `Bearer ${accessToken}`,
+    const response = await fetch(url, {
+      method: "DELETE",
+      mode: "cors", // Ensure CORS mode
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
     });
-    return response;
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     return {
       success: false,
-      error: error.message || "Error deleting main category",
+      error: error.message || "Error deleting sub category",
     };
   }
 };
+
 
 export const createSubCategoryApi = async (categoryData) => {
   const url = `${BASE_URL}/admin/subcategory/create`;
@@ -405,11 +423,52 @@ export const createProductApi = async (productData) => {
   try {
     const response = await commonApi("POST", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
     return { success: false, error: error.message || "Error creating Product" };
+  }
+};
+
+export const getPlatformFeeApi = async () => {
+  const url = `${BASE_URL}/admin/platform/get-fee`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return { success: false, error: error.message || "Error fetching platform fee" };
+  }
+};
+export const createPlatformApi = async (feeType, amount) => {
+  const url = `${BASE_URL}/admin/platform/create`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  const payload = { feeType, amount };
+
+  try {
+    const response = await commonApi("POST", url, payload, {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error creating platform",
+    };
   }
 };
 
@@ -427,7 +486,7 @@ export const bulkUploadProductsApi = async (file) => {
   try {
     const response = await commonApi("POST", url, formData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Required for file uploads
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -449,7 +508,7 @@ export const editProductApi = async (productId, productData) => {
   try {
     const response = await commonApi("PATCH", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -543,6 +602,72 @@ export const getSellerRequestApi = async () => {
     };
   }
 };
+
+export const verifyAccountApi = async (accountNumber, ifscCode) => {
+  const url = `${BASE_URL}/admin/vendor/verifyaccount?accountNumber=${accountNumber}&ifscCode=${ifscCode}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error verifying account",
+    };
+  }
+};
+
+
+export const verifyGstApi = async (gstNumber) => {
+  const url = `${BASE_URL}/admin/vendor/verifygst?gstNumber=${gstNumber}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error verifying GST",
+    };
+  }
+};
+
+
+export const verifyPanApi = async (panNumber) => {
+  const url = `${BASE_URL}/admin/vendor/verifypan?panNumber=${panNumber}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error verifying PAN",
+    };
+  }
+};
+
 
 export const updateSellerRequestApi = async (id) => {
   if (!id) {
@@ -668,8 +793,8 @@ export const createSellerApi = async (productData) => {
 
   try {
     const response = await commonApi("POST", url, productData, {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", 
+      Authorization: `Bearer ${accessToken}`
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -688,7 +813,7 @@ export const editSellerApi = async (productId, productData) => {
   try {
     const response = await commonApi("PATCH", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
     });
     return response;
   } catch (error) {
@@ -716,6 +841,28 @@ export const deleteSelllerApi = async (productId) => {
     return response;
   } catch (error) {
     return { success: false, error: error.message || "Error deleting Product" };
+  }
+};
+
+
+export const getReportApi = async (month) => {
+  const url = `${BASE_URL}/admin/vendor/reports?month=${month}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("GET", url, null, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error fetching report",
+    };
   }
 };
 
@@ -751,7 +898,7 @@ export const createNotificationApi = async (productData) => {
   try {
     const response = await commonApi("POST", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data",
     });
     return response;
   } catch (error) {
@@ -852,7 +999,7 @@ export const editCouponApi = async (couponId, couponData) => {
   try {
     const response = await commonApi("PATCH", url, couponData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -922,6 +1069,32 @@ export const getOrderByIdApi = async (orderId) => {
     };
   }
 };
+
+
+export const settleOrderAmountApi = async (orderId, isSettled) => {
+  const url = `${BASE_URL}/admin/order/${orderId}/settlement`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("PUT", url, { settled: isSettled }, {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    });
+
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error settling order amount",
+    };
+  }
+};
+
+
 export const updateOrderStatusApi = async (orderId, orderStatus) => {
   const url = `${BASE_URL}/admin/order/update/${orderId}`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");
@@ -1083,25 +1256,18 @@ export const createcustomerApi = async (reqBody) => {
 };
 
 export const getdealofthedayApi = async () => {
-  const url = `${BASE_URL}/admin/product/get`;
-  const accessToken = localStorage.getItem("rigsdock_accessToken");
-
-  if (!accessToken) {
-    return { success: false, error: "No token provided" };
-  }
-
+  const url = `${BASE_URL}/user/dealoftheday/get`;
   try {
-    const response = await commonApi("GET", url, null, {
-      Authorization: `Bearer ${accessToken}`,
-    });
+    const response = await commonApi("GET", url);
     return response;
   } catch (error) {
     return {
       success: false,
-      error: error.message || "Error fetching  products",
+      error: error.message || "Error fetching products",
     };
   }
 };
+
 
 export const getdealofthedaybyidApi = async (productId) => {
   const url = `${BASE_URL}/admin/product/get/${productId}`;
@@ -1135,7 +1301,7 @@ export const createDealOftheDayApi = async (dealdata) => {
   try {
     const response = await commonApi("POST", url, dealdata, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
     });
     return response;
   } catch (error) {
@@ -1573,7 +1739,7 @@ export const editVendorProductApi = async (productId, productData) => {
   try {
     const response = await commonApi("PATCH", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -1591,7 +1757,6 @@ export const createvendorProductApi = async (productData) => {
 
   try {
     // Debug: Log what's in the FormData before sending
-    console.log("FormData contents before sending:");
     for (let pair of productData.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
       if (pair[0] === "attributes") {
@@ -1602,7 +1767,7 @@ export const createvendorProductApi = async (productData) => {
 
     const response = await commonApi("POST", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
     });
     return response;
   } catch (error) {
@@ -1910,7 +2075,7 @@ export const createvendorNotificationApi = async (productData) => {
   try {
     const response = await commonApi("POST", url, productData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data", // Ensure proper headers
+      // "Content-Type": "multipart/form-data", 
     });
     return response;
   } catch (error) {
@@ -1986,7 +2151,28 @@ export const getvendorOrderByIdApi = async (orderId) => {
     };
   }
 };
+export const updateVendorOrderStatusApi = async (orderId, orderStatus) => {
+  const url = `${BASE_URL}/vendor/order/update/${orderId}`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
 
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+
+  try {
+    const response = await commonApi("PATCH", url, { orderStatus }, {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    });
+
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message || "Error updating order status",
+    };
+  }
+};
 export const getvendorProfileApi = async () => {
   const url = `${BASE_URL}/vendor/profile/view`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");
@@ -2019,7 +2205,7 @@ export const updateVendorProfileApi = async (formData) => {
   try {
     const response = await commonApi("PATCH", url, formData, {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
     });
     return response;
   } catch (error) {
@@ -2163,7 +2349,79 @@ export const getVendorOfferApi = async () => {
     };
   }
 };
-
+export const downloadVendorInvoice = async (orderId) => {
+  const url = `${BASE_URL}/vendor/order/${orderId}/invoice`;
+  const accessToken = localStorage.getItem("rigsdock_accessToken");
+  
+  if (!accessToken) {
+    return { success: false, error: "No token provided" };
+  }
+  
+  try {
+    // Using fetch directly for JSON response
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate invoice');
+    }
+    
+    // Get the response as JSON first to extract the invoice URL
+    const data = await response.json();
+    
+    if (!data.invoiceUrl) {
+      throw new Error('Invoice URL not found in response');
+    }
+    
+    // Make sure the URL has the correct format
+    let pdfUrl = data.invoiceUrl;
+    
+    // Check if the URL is relative and fix it if needed
+    if (!pdfUrl.startsWith('http')) {
+      // Add the base URL to make it absolute
+      pdfUrl = `${BASE_URL}${pdfUrl.startsWith('/') ? '' : '/'}${pdfUrl}`;
+    }
+    
+    console.log("Downloading PDF from URL:", pdfUrl);
+    
+    // Now fetch the actual PDF file
+    const pdfResponse = await fetch(pdfUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    
+    if (!pdfResponse.ok) {
+      throw new Error(`Failed to download invoice PDF: ${pdfResponse.status} ${pdfResponse.statusText}`);
+    }
+    
+    // Get the PDF as blob
+    const pdfBlob = await pdfResponse.blob();
+    
+    // Create a download link and trigger download
+    const downloadUrl = window.URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `vendor-invoice-${orderId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+    
+    return { success: true, message: 'Invoice downloaded successfully' };
+  } catch (error) {
+    console.error('Download error:', error);
+    return {
+      success: false,
+      error: error.message || "Error downloading invoice",
+    };
+  }
+};
 export const createVendorOfferApi = async (reqBody) => {
   const url = `${BASE_URL}/vendor/offer/create`;
   const accessToken = localStorage.getItem("rigsdock_accessToken");

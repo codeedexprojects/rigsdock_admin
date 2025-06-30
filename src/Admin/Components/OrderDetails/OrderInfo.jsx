@@ -75,7 +75,7 @@ const OrderInfo = ({ order }) => {
             <Box>
               <Typography fontWeight="bold">Shipping</Typography>
               <Typography variant="body2" color="text.secondary">
-                {shippingAddress.fullName}, {shippingAddress.addressLine1}, {shippingAddress.addressLine2}, {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.zipCode}, {shippingAddress.country}
+                {shippingAddress.fullName} {shippingAddress.addressLine1}, {shippingAddress.addressLine2}, {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.zipCode}, {shippingAddress.country}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Phone: {shippingAddress.phone}

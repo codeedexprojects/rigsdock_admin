@@ -14,17 +14,21 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import {
   AddPhotoAlternate as AddImageIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
-  Upload as ImportIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
 
 import { useParams, useNavigate } from "react-router-dom";
 import {
+  deleteVendorProductApi,
   deleteVendorProductAttributeApi,
   deletevendorProductImageApi,
   editVendorProductApi,
@@ -33,7 +37,8 @@ import {
   getvendorProductByIdApi,
   getVendorSubcategoryByCategoryIdApi,
 } from "../../services/allApi";
-import { BASE_URL } from "../../services/baseUrl";
+import { IMG_BASE_URL } from "../../services/baseUrl";
+import { toast, ToastContainer } from "react-toastify";
 
 const ViewSingleVendorProduct = () => {
   const { productId } = useParams();
@@ -44,6 +49,7 @@ const ViewSingleVendorProduct = () => {
     name: "",
     description: "",
     price: "",
+    finalPrice:"",
     discountprice: "",
     discountpercentage: "",
     offer: false,
@@ -54,11 +60,11 @@ const ViewSingleVendorProduct = () => {
     subcategory: "",
     BISCode: "",
     HSNCode: "",
-    length:"",
-    breadth:"",
-    height:"",
-    weight:"",
-    tags: [],
+    length: "",
+    breadth: "",
+    height: "",
+    weight: "",
+    deliveryfee:"",
     attributes: {},
   });
 
@@ -88,11 +94,11 @@ const ViewSingleVendorProduct = () => {
 
         const product = response.data.product;
 
-        // Set existing product data
         setFormData({
           name: product.name || "",
           description: product.description || "",
           price: product.price || "",
+          finalPrice:product.finalPrice,
           discountprice: product.discountprice || "",
           discountpercentage: product.discountpercentage || "",
           offer: product.offer || false,
@@ -101,13 +107,13 @@ const ViewSingleVendorProduct = () => {
           maincategory: product.maincategory || "",
           category: product.category || "",
           subcategory: product.subcategory || "",
-          BISCode:product.BISCode  || "",
-          HSNCode:product.HSNCode  || "",
-          length:product.length  || "",
-          breadth:product.breadth  || "",
-          height:product.height  || "",
-          weight:product.weight  || "",
-          tags: product.tags || [],
+          BISCode: product.BISCode || "",
+          HSNCode: product.HSNCode || "",
+          length: product.length || "",
+          breadth: product.breadth || "",
+          height: product.height || "",
+          weight: product.weight || "",
+          deliveryfee: product.deliveryfee || "",
           attributes: product.attributes || {},
         });
 
@@ -115,7 +121,7 @@ const ViewSingleVendorProduct = () => {
           setExistingImages(
             product.images.map((img, index) => ({
               id: `existing-${index}`,
-              url: `${BASE_URL}/uploads/${img}`, 
+              url: `${IMG_BASE_URL}/uploads/${img}`,
               name: `Image ${index + 1}`,
               size: "Unknown",
             }))
@@ -211,45 +217,42 @@ const ViewSingleVendorProduct = () => {
     }
   };
 
-  // Handle offer toggle
-  // const handleOfferToggle = (e) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     offer: e.target.checked,
-  //   }));
-  // };
-
   // Handle image upload
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    // Ensure files are added as File objects for API submission
+    // Maintain file references for FormData
     setImageFiles((prev) => [...prev, ...files]);
 
-    // Create preview images for UI display
+    // Create preview objects with proper cleanup
     const newImages = files.map((file) => ({
       name: file.name,
       size: `${(file.size / 1024).toFixed(2)} KB`,
       preview: URL.createObjectURL(file),
       isNew: true,
+      file, // Store the actual File object
     }));
 
     setImages((prev) => [...prev, ...newImages]);
   };
 
   const handleRemoveImage = (index) => {
-    const newImages = images.filter((_, i) => i !== index);
-    const newImageFiles = imageFiles.filter((_, i) => i !== index);
-    setImages(newImages);
-    setImageFiles(newImageFiles);
+    const imageToRemove = images[index];
+
+    // Clean up object URLs
+    if (imageToRemove.preview) {
+      URL.revokeObjectURL(imageToRemove.preview);
+    }
+
+    // Sync both states using unique identifiers
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleRemoveExistingImage = async (index) => {
-    const imageId = productId;
-    const imageName = existingImages[index]?.url;
-
-    if (!imageName) {
+    const imageToDelete = existingImages[index];
+    if (!imageToDelete?.url) {
       setAlert({
         open: true,
         message: "Image name not found",
@@ -259,20 +262,18 @@ const ViewSingleVendorProduct = () => {
     }
 
     try {
-      const response = await deletevendorProductImageApi(imageId, imageName);
+      const response = await deletevendorProductImageApi(
+        productId,
+        imageToDelete.url
+      );
 
       if (response.success) {
-        setExistingImages((prevImages) =>
-          prevImages.filter((_, i) => i !== index)
-        );
-
+        setExistingImages((prev) => prev.filter((_, i) => i !== index));
         setAlert({
           open: true,
           message: "Image deleted successfully",
           severity: "success",
         });
-      } else {
-        throw new Error(response.error || "Failed to delete image");
       }
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -313,8 +314,6 @@ const ViewSingleVendorProduct = () => {
       console.error("Error deleting attribute:", error.message);
     }
   };
-  
-
 
   const handleAttributeInputChange = (e) => {
     const { name, value } = e.target;
@@ -357,7 +356,7 @@ const ViewSingleVendorProduct = () => {
       category: categoryId,
       subcategory: "",
     }));
-    setSubcategories([]);
+    setSubcategories([]); // Ensure subcategories is always an array
 
     if (!mainCategoryToUse) {
       console.error("No main category selected");
@@ -374,11 +373,15 @@ const ViewSingleVendorProduct = () => {
         mainCategoryToUse,
         categoryId
       );
-      console.log("Fetched subcategories:", response);
 
-      setSubcategories(response.data);
+      if (response.data && response.data.length > 0) {
+        setSubcategories(response.data);
+      } else {
+        setSubcategories([]); // Ensure it's an empty array if no subcategories found
+      }
     } catch (error) {
       console.error("Error fetching subcategories:", error);
+      setSubcategories([]); // Set empty array in case of error
       setAlert({
         open: true,
         message: "Failed to fetch subcategories",
@@ -416,36 +419,41 @@ const ViewSingleVendorProduct = () => {
 
       const formDataToSend = new FormData();
 
-      // Add all fields except attributes and tags
+      // Add all form fields
       for (const key in formData) {
-        if (key !== "attributes" && key !== "tags") {
+        if (key !== "attributes") {
           formDataToSend.append(key, formData[key]);
         }
       }
 
-      formDataToSend.append("tags", JSON.stringify(formData.tags || []));
-
+      // Handle attributes
       if (formData.attributes && Object.keys(formData.attributes).length > 0) {
-        // Correctly structure the attributes for FormData
-        Object.entries(formData.attributes).forEach(([key, value]) => {
-          formDataToSend.append(`attributes[${key}]`, value);
-        });
+        formDataToSend.append(
+          "attributes",
+          JSON.stringify(formData.attributes)
+        );
       } else {
         formDataToSend.append("attributes", "{}");
       }
-      imageFiles.forEach((file) => {
-        formDataToSend.append("images", file);
-      });
 
-      formDataToSend.append("imagesToDelete", JSON.stringify(imagesToDelete));
-      console.log("Form data entries:");
-      for (let pair of formDataToSend.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-        if (pair[0].startsWith("attributes")) {
-          console.log(`Attributes value type: ${typeof pair[1]}`);
-          console.log(`Raw attributes value: ${pair[1]}`);
-        }
+      // Try uploading without images first
+      const hasImages = imageFiles && imageFiles.length > 0;
+
+      // If we have images and we need to add them
+      if (hasImages) {
+        // Try using a single field name for all images
+        // BUT append as a file array instead of individual files
+        const filesArray = Array.from(imageFiles);
+        filesArray.forEach((file, index) => {
+          // Use the index in the field name to make each unique
+          formDataToSend.append(`images[${index}]`, file);
+        });
       }
+
+      if (imagesToDelete.length > 0) {
+        formDataToSend.append("imagesToDelete", JSON.stringify(imagesToDelete));
+      }
+
       const response = await editVendorProductApi(productId, formDataToSend);
       console.log("Product updated:", response.data);
 
@@ -465,10 +473,41 @@ const ViewSingleVendorProduct = () => {
   };
 
   const handleCancel = () => {
-    navigate("/products");
+    navigate("/vendor-viewProducts");
+  };
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleDeleteClick = () => {
+    setOpenConfirm(true);
   };
 
-  // Handle alert close
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await deleteVendorProductApi(productId);
+      console.log(response);
+
+      if (response.status === 200) {
+        toast.success("Product deleted successfully!");
+        setOpenConfirm(false);
+        navigate("/vendor-viewProducts");
+      } else if (response.status === 404) {
+        toast.error("Product not found.");
+        setOpenConfirm(false);
+      } else {
+        toast.error("Something went wrong while deleting the product.");
+        setOpenConfirm(false);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Server error while deleting the product.");
+      setOpenConfirm(false);
+    }
+  };
+
   const handleAlertClose = () => {
     setAlert((prev) => ({
       ...prev,
@@ -493,20 +532,41 @@ const ViewSingleVendorProduct = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Page Title */}
-      <Typography variant="h5" fontWeight="bold" mb={2}>
-        Edit Product
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          Edit Product
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<DeleteIcon />}
+          onClick={handleDeleteClick}
+          sx={{
+            backgroundColor: "red",
+            color: "white",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "darkred",
+            },
+          }}
+        >
+          Delete
+        </Button>
+      </Box>
 
       <Grid container spacing={3}>
-        {/* Left Side: Image Upload Section */}
         <Grid item xs={12} md={5}>
           <Card sx={{ borderRadius: 3, p: 2 }}>
             <Typography variant="h6" fontWeight="bold" mb={2}>
               Product Images
             </Typography>
 
-            {/* Existing Images */}
             {existingImages.length > 0 && (
               <>
                 <Typography variant="subtitle2" mb={1}>
@@ -528,7 +588,8 @@ const ViewSingleVendorProduct = () => {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <Box
                         component="img"
-                        src={image.url}                        sx={{
+                        src={image.url}
+                        sx={{
                           width: 40,
                           height: 40,
                           objectFit: "cover",
@@ -547,7 +608,6 @@ const ViewSingleVendorProduct = () => {
               </>
             )}
 
-            {/* Image Upload Box */}
             <Typography variant="subtitle2" mt={2} mb={1}>
               Add New Images
             </Typography>
@@ -581,7 +641,6 @@ const ViewSingleVendorProduct = () => {
               </Button>
             </Paper>
 
-            {/* New Uploaded Images List */}
             {images.map((image, index) => (
               <Paper
                 key={index}
@@ -622,12 +681,10 @@ const ViewSingleVendorProduct = () => {
               </Paper>
             ))}
 
-            {/* Attributes Section */}
             <Typography variant="h6" fontWeight="bold" mt={4} mb={2}>
               Product Attributes
             </Typography>
 
-            {/* Attributes List */}
             {Object.entries(formData.attributes).map(([key, value]) => (
               <Paper
                 key={key}
@@ -656,7 +713,6 @@ const ViewSingleVendorProduct = () => {
               </Paper>
             ))}
 
-            {/* Add New Attribute Form */}
             <Box
               sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}
             >
@@ -692,9 +748,8 @@ const ViewSingleVendorProduct = () => {
 
         <Grid item xs={12} md={7}>
           <Card sx={{ borderRadius: 3, p: 2 }}>
-            {/* Import Button */}
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
+              {/* <Button
                 variant="contained"
                 startIcon={<ImportIcon />}
                 sx={{
@@ -704,11 +759,10 @@ const ViewSingleVendorProduct = () => {
                 }}
               >
                 Import
-              </Button>
+              </Button> */}
             </Box>
 
             <Grid container spacing={2} mt={2}>
-              {/* Product Name */}
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -721,7 +775,6 @@ const ViewSingleVendorProduct = () => {
                 />
               </Grid>
 
-              {/* Base Price and Offer Toggle */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -734,51 +787,18 @@ const ViewSingleVendorProduct = () => {
                   required
                 />
               </Grid>
-
-              {/* Offer Toggle */}
-              {/* <Grid item xs={12} md={6}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.offer}
-                      onChange={handleOfferToggle}
-                      name="offer"
-                      color="primary"
-                    />
-                  }
-                  label="Special Offer"
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Final Price"
+                  name="finalPrice"
+                  value={formData.finalPrice}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  type="number"
+                  required
                 />
               </Grid>
-
-              {/* Discount Fields - Only shown when offer is true */}
-              {/* {formData.offer && (
-                <>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      fullWidth
-                      label="Discount Percentage (%)"
-                      name="discountpercentage"
-                      value={formData.discountpercentage}
-                      onChange={handleInputChange}
-                      variant="outlined"
-                      type="number"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      fullWidth
-                      label="Offer Price"
-                      name="discountprice"
-                      value={formData.discountprice}
-                      onChange={handleInputChange}
-                      variant="outlined"
-                      type="number"
-                    />
-                  </Grid>
-                </>
-              )} */}
-
-              {/* Stock */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -791,7 +811,6 @@ const ViewSingleVendorProduct = () => {
                 />
               </Grid>
 
-              {/* Brand */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -868,6 +887,17 @@ const ViewSingleVendorProduct = () => {
                   required
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Delivery Fee"
+                  name="deliveryfee"
+                  value={formData.deliveryfee}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  required
+                />
+              </Grid>
               {/* Description */}
               <Grid item xs={12}>
                 <TextField
@@ -883,7 +913,6 @@ const ViewSingleVendorProduct = () => {
                 />
               </Grid>
 
-              {/* Main Category */}
               <Grid item xs={12}>
                 <TextField
                   select
@@ -902,8 +931,6 @@ const ViewSingleVendorProduct = () => {
                 </TextField>
               </Grid>
 
-              {/* Category */}
-              {/* Category */}
               <Grid item xs={12}>
                 <TextField
                   select
@@ -925,28 +952,32 @@ const ViewSingleVendorProduct = () => {
                 </TextField>
               </Grid>
 
-              {/* Subcategory */}
               <Grid item xs={12}>
                 <TextField
                   select
                   fullWidth
                   label="Subcategory"
-                  value={formData.subcategory}
+                  value={formData.subcategory || ""}
                   onChange={(e) => handleSubcategoryChange(e.target.value)}
                   variant="outlined"
                   disabled={!formData.category}
                   required
                 >
-                  {subcategories.map((sub) => (
-                    <MenuItem key={sub._id} value={sub._id}>
-                      {sub.name}
+                  {subcategories && subcategories.length > 0 ? (
+                    subcategories.map((sub) => (
+                      <MenuItem key={sub._id} value={sub._id}>
+                        {sub.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="N/A" disabled>
+                      N/A
                     </MenuItem>
-                  ))}
+                  )}
                 </TextField>
               </Grid>
             </Grid>
 
-            {/* Action Buttons */}
             <Box
               sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}
             >
@@ -966,7 +997,6 @@ const ViewSingleVendorProduct = () => {
         </Grid>
       </Grid>
 
-      {/* Notification */}
       <Snackbar
         open={alert.open}
         autoHideDuration={6000}
@@ -980,6 +1010,24 @@ const ViewSingleVendorProduct = () => {
           {alert.message}
         </Alert>
       </Snackbar>
+      <Dialog open={openConfirm} onClose={handleCloseConfirm}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this product? This action cannot be
+          undone.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirm}>Cancel</Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+          >
+            Confirm Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <ToastContainer></ToastContainer>
     </Box>
   );
 };

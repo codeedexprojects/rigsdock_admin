@@ -320,7 +320,7 @@ const DealOfTheDay = () => {
                       fontWeight={700}
                       color="primary"
                     >
-                      Offer Price: ${item.offerPrice}
+                      Offer Price: {item.offerPrice}
                     </Typography>
                   </Box>
 

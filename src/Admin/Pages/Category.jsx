@@ -23,7 +23,7 @@ import {
 import { Edit, Delete, Add, FilterList } from "@mui/icons-material";
 import { getCategoriesApi, deleteCategoryApi } from "../../services/allApi";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../services/baseUrl";
+import { BASE_URL, IMG_BASE_URL } from "../../services/baseUrl";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -119,19 +119,20 @@ const CategoryList = () => {
 
   const handleDelete = async () => {
     if (!deleteId) return;
-    
+  
     setIsLoading(true);
-    
+  
     try {
       const response = await deleteCategoryApi(deleteId);
-      
-      if (response.success) {
+      console.log(response); // Debugging
+  
+      if (response.message === "Category deleted successfully") {
         // Update categories lists
         setCategories(categories.filter((item) => item._id !== deleteId));
         setFilteredCategories(
           filteredCategories.filter((category) => category._id !== deleteId)
         );
-        
+  
         // Show success notification
         showNotification("Category deleted successfully", "success");
       } else {
@@ -139,7 +140,6 @@ const CategoryList = () => {
         showNotification("Failed to delete category. Please try again.", "error");
       }
     } catch (error) {
-      // Show error notification with specific error message if available
       showNotification(
         error.message || "Failed to delete category. Please try again.",
         "error"
@@ -149,7 +149,7 @@ const CategoryList = () => {
       handleCloseConfirm();
     }
   };
-
+  
   const paginatedCategories = filteredCategories.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
@@ -226,7 +226,7 @@ const CategoryList = () => {
         </Box>
       )}
 
-      {!loading && !error && paginatedCategories.length === 0 && (
+           {!loading && !error && paginatedCategories.length === 0 && (
         <Box mt={3} textAlign="center">
           <Typography>No categories found.</Typography>
         </Box>
@@ -234,12 +234,12 @@ const CategoryList = () => {
       {!loading && !error && paginatedCategories.length > 0 && (
         <Grid container spacing={3}>
           {paginatedCategories.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={6} key={index}>
               <Card sx={{ p: 2 }}>
                 <Box display="flex" alignItems="center">
                   <CardMedia
                     component="img"
-                    image={`${BASE_URL}/uploads/${item.image}`}
+                    image={`${IMG_BASE_URL}/uploads/${item.image}`}
                     alt={item.name}
                     sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
                   />
@@ -263,7 +263,7 @@ const CategoryList = () => {
                       SUB CATEGORY
                     </Typography>
                     <Typography style={{ textAlign: "center" }}>
-                      <b>{item.name}</b>
+                      <b>{item.subCategoryCount}</b>
                     </Typography>
                   </Box>
                   <Box>

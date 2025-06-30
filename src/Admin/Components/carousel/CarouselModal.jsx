@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Image, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Image, Row, Col, Alert } from "react-bootstrap";
+import {  IMG_BASE_URL } from "../../../services/baseUrl";
 
 const CarouselModal = ({ show, onHide, onSave, item }) => {
   const [formData, setFormData] = useState({
@@ -7,7 +8,10 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
     link: "",
     image: null,
     imagePreview: "",
+    isEditing: false
   });
+  
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (item) {
@@ -15,11 +19,21 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
         title: item.title || "",
         link: item.link || "",
         image: null,
-        imagePreview: item.image || "",
+        imagePreview: item.image ? `${IMG_BASE_URL}/uploads/${item.image}` : "",
+        isEditing: true,
+        _id: item._id
       });
     } else {
-      setFormData({ title: "", link: "", image: null, imagePreview: "" });
+      setFormData({ 
+        title: "", 
+        link: "", 
+        image: null, 
+        imagePreview: "",
+        isEditing: false,
+        _id: null
+      });
     }
+    setError("");
   }, [item]);
 
   const handleChange = (e) => {
@@ -33,13 +47,33 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
       setFormData((prev) => ({
         ...prev,
         image: file,
-        imagePreview: URL.createObjectURL(file), // Show preview instantly
+        imagePreview: URL.createObjectURL(file), 
       }));
+      setError("");
     }
   };
   
   const handleSubmit = () => {
-    if (!formData.title || !formData.link || !formData.image) {
+    // Basic validation
+    if (!formData.title) {
+      setError("Title is required");
+      return;
+    }
+    
+    if (!formData.link) {
+      setError("Link is required");
+      return;
+    }
+    
+    // For edit operations, we need an image file since we can't change the backend
+    if (formData.isEditing && !formData.image) {
+      setError("Please select an image file again even when editing");
+      return;
+    }
+    
+    // For new items, image is required
+    if (!formData.image) {
+      setError("Image is required");
       return;
     }
 
@@ -47,22 +81,29 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
     formDataObj.append("title", formData.title);
     formDataObj.append("link", formData.link);
 
+    // Add ID for editing
+    if (formData.isEditing && formData._id) {
+      formDataObj.append("_id", formData._id);
+    }
+
+    // Add image file
     if (formData.image instanceof File) {
       formDataObj.append("image", formData.image);
     }
 
     onSave(formDataObj);
-    onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} centered style={{ zIndex: "1234" }}>
       <Modal.Header closeButton className="bg-light">
         <Modal.Title className="fw-bold">
-          {item ? "Edit Carousel" : "Add Carousel"}
+          {formData.isEditing ? "Edit Carousel" : "Add Carousel"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 py-3">
+        {error && <Alert variant="danger">{error}</Alert>}
+        
         <Form>
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Title</Form.Label>
@@ -89,12 +130,19 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Upload Image</Form.Label>
+            <Form.Label className="fw-semibold">
+              {formData.isEditing ? (
+                <span className="text-danger">Upload Image (Required even when editing)</span>
+              ) : (
+                "Upload Image"
+              )}
+            </Form.Label>
             <Form.Control
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className="p-2"
+              required
             />
             {formData.imagePreview && (
               <div className="mt-3 text-center">
@@ -109,6 +157,11 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
                     boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
                   }}
                 />
+              </div>
+            )}
+            {formData.isEditing && !formData.image && (
+              <div className="mt-2 text-danger">
+                <small>* You must re-upload an image even when editing due to backend requirements</small>
               </div>
             )}
           </Form.Group>
@@ -131,7 +184,7 @@ const CarouselModal = ({ show, onHide, onSave, item }) => {
               onClick={handleSubmit}
               className="w-100 py-2"
             >
-              {item ? "Save Changes" : "Add"}
+              {formData.isEditing ? "Save Changes" : "Add"}
             </Button>
           </Col>
         </Row>

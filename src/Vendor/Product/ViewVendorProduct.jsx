@@ -35,8 +35,11 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import Paginations from "../SellerPage/Paginations";
 import { Link, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { bulkDeleteVendorProductsApi, getvendorproductsApi } from "../../services/allApi";
-import { BASE_URL } from "../../services/baseUrl";
+import {
+  bulkDeleteVendorProductsApi,
+  getvendorproductsApi,
+} from "../../services/allApi";
+import { BASE_URL, IMG_BASE_URL } from "../../services/baseUrl";
 
 const ViewVendorProduct = () => {
   const [products, setProducts] = useState([]);
@@ -49,7 +52,7 @@ const ViewVendorProduct = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-  const [action, setAction] = useState(""); 
+  const [action, setAction] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
@@ -147,45 +150,51 @@ const ViewVendorProduct = () => {
       product.category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleSelectProduct = (productId) => {
-    setSelectedProductIds(
-      (prev) =>
-        prev.includes(productId)
-          ? prev.filter((id) => id !== productId) 
-          : [...prev, productId]
+    setSelectedProductIds((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
     );
   };
   const timeFilteredProducts = filteredProducts.filter((product) => {
-    if (timeFilter === 'all') return true;
-    
+    if (timeFilter === "all") return true;
+
     const productDate = new Date(product.createdAt);
     const now = new Date();
-    
-    if (timeFilter === 'week') {
+
+    if (timeFilter === "week") {
       // Check if product was created within the last week
       const weekAgo = new Date(now.setDate(now.getDate() - 7));
       return productDate >= weekAgo;
-    } else if (timeFilter === 'month') {
+    } else if (timeFilter === "month") {
       // Check if product was created within the last month
       const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
       return productDate >= monthAgo;
     }
-    
+
     return true;
   });
 
   // Sort products based on selected sort option
   const sortedProducts = [...timeFilteredProducts].sort((a, b) => {
     switch (sortBy) {
-      case 'name':
+      case 'name-asc':
         return a.name.localeCompare(b.name);
-      case 'price':
+      case 'name-desc':
+        return b.name.localeCompare(a.name);
+      case 'price-asc':
         return parseFloat(a.price) - parseFloat(b.price);
-      case 'date':
+      case 'price-desc':
+        return parseFloat(b.price) - parseFloat(a.price);
+      case 'date-asc':
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      case 'date-desc':
         return new Date(b.createdAt) - new Date(a.createdAt);
       default:
-        return 0; // Default sorting (as returned from API)
+        return 0; // No sorting
     }
   });
+  
 
   // Handle pagination
   const handleChangePage = (event, newPage) => {
@@ -228,7 +237,7 @@ const ViewVendorProduct = () => {
             Products
           </Typography>
 
-           <Box sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography color="#92929D">Show:</Typography>
             <Select
               value={timeFilter}
@@ -250,7 +259,7 @@ const ViewVendorProduct = () => {
               <MenuItem value="week">This Week</MenuItem>
               <MenuItem value="month">This Month</MenuItem>
             </Select>
-          </Box>
+          </Box> */}
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Typography color="#92929D">Sort by:</Typography>
@@ -268,9 +277,12 @@ const ViewVendorProduct = () => {
             }}
           >
             <MenuItem value="default">Default</MenuItem>
-            <MenuItem value="name">Name</MenuItem>
-            <MenuItem value="price">Price</MenuItem>
-            <MenuItem value="date">Date</MenuItem>
+            <MenuItem value="name-asc">Name (A-Z)</MenuItem>
+            <MenuItem value="name-desc">Name (Z-A)</MenuItem>
+            <MenuItem value="price-asc">Price (Low to High)</MenuItem>
+            <MenuItem value="price-desc">Price (High to Low)</MenuItem>
+            <MenuItem value="date-asc">Date (Oldest First)</MenuItem>
+            <MenuItem value="date-desc">Date (Newest First)</MenuItem>
           </Select>
           <IconButton>
             <FilterAltOutlinedIcon sx={{ color: "#9FA3A8" }} />
@@ -291,7 +303,6 @@ const ViewVendorProduct = () => {
           </Link>
         </Box>
       </Box>
-
       {/* Search Bar */}
       <Paper
         elevation={0}
@@ -320,51 +331,47 @@ const ViewVendorProduct = () => {
             ),
           }}
         />
-    <FormControl sx={{ minWidth: 120 }}>
-  <Select
-    value={action} // Controlled value
-    sx={{
-      borderRadius: 3.06,
-      height: 45,
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#9e9999",
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#DFDFDF",
-      },
-    }}
-    displayEmpty
-    variant="outlined"
-    onChange={(event) => {
-      setAction(event.target.value);
-      if (event.target.value === "delete") {
-        handleOpenDeleteModal();
-      }
-    }}
-  >
-    <MenuItem value="">Action</MenuItem>
-    <MenuItem value="edit">Edit</MenuItem>
-    <MenuItem value="delete">Delete</MenuItem>
-    <MenuItem value="export">Export</MenuItem>
-  </Select>
-</FormControl>
-
+        <FormControl sx={{ minWidth: 120 }}>
+          <Select
+            value={action} // Controlled value
+            sx={{
+              borderRadius: 3.06,
+              height: 45,
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#9e9999",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#DFDFDF",
+              },
+            }}
+            displayEmpty
+            variant="outlined"
+            onChange={(event) => {
+              setAction(event.target.value);
+              if (event.target.value === "delete") {
+                handleOpenDeleteModal();
+              }
+            }}
+          >
+            <MenuItem value="">Action</MenuItem>
+            {/* <MenuItem value="edit">Edit</MenuItem> */}
+            <MenuItem value="delete">Delete</MenuItem>
+            {/* <MenuItem value="export">Export</MenuItem> */}
+          </Select>
+        </FormControl>
       </Paper>
-
       {/* Loading State */}
       {loading && (
         <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
           <CircularProgress />
         </Box>
       )}
-
       {/* Error State */}
       {error && (
         <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
           <Typography color="error">{error}</Typography>
         </Box>
       )}
-
       {/* Table */}
       {!loading && !error && (
         <TableContainer
@@ -472,8 +479,9 @@ const ViewVendorProduct = () => {
                       },
                       transition: "background-color 0.2s ease",
                     }}
-                    onClick={() => navigate(`/vendor-products/edit/${product._id}`)} 
-
+                    onClick={() =>
+                      navigate(`/vendor-products/edit/${product._id}`)
+                    }
                   >
                     <TableCell
                       padding="checkbox"
@@ -490,12 +498,13 @@ const ViewVendorProduct = () => {
                         <Avatar
                           src={
                             product.images && product.images.length > 0
-                              ? `${BASE_URL}/uploads/${product.images[0]}`
+                              ? `${IMG_BASE_URL}/uploads/${product.images[0]}`
                               : ""
                           }
                           variant="rounded"
                           sx={{ width: 50, height: 50 }}
                         />
+
                         <Box>
                           <Typography fontWeight="medium">
                             {product.name}
@@ -586,26 +595,35 @@ const ViewVendorProduct = () => {
         </DialogActions>
       </Dialog>
       <SnackbarAlert />
-
       {!loading && !error && sortedProducts.length > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3, px: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 3,
+            px: 2,
+          }}
+        >
           <Typography color="text.secondary">
-            Showing {Math.min(sortedProducts.length, (page - 1) * rowsPerPage + 1)}-
-            {Math.min(sortedProducts.length, page * rowsPerPage)} of {sortedProducts.length} products
+            Showing{" "}
+            {Math.min(sortedProducts.length, (page - 1) * rowsPerPage + 1)}-
+            {Math.min(sortedProducts.length, page * rowsPerPage)} of{" "}
+            {sortedProducts.length} products
           </Typography>
-          
+
           <Stack spacing={2}>
-            <Pagination 
-              count={totalPages} 
-              page={page} 
-              onChange={handleChangePage} 
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handleChangePage}
               color="primary"
               shape="rounded"
               showFirstButton
               showLastButton
             />
           </Stack>
-          
+
           <Box sx={{ minWidth: 120 }}>
             <Select
               value={rowsPerPage}
@@ -623,7 +641,8 @@ const ViewVendorProduct = () => {
             </Select>
           </Box>
         </Box>
-      )}    </Box>
+      )}{" "}
+    </Box>
   );
 };
 

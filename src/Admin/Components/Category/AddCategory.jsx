@@ -29,6 +29,7 @@ const AddCategoryPage = () => {
   const [previewImage, setPreviewImage] = useState(
     "https://via.placeholder.com/120"
   );
+  const [commissionPercentage,setCommissionPercentage] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(false);
@@ -67,8 +68,8 @@ const AddCategoryPage = () => {
   const handleSubmit = async () => {
     if (
       !categoryName.trim() ||
-      !description.trim() ||
       !categoryImage ||
+      !commissionPercentage ||
       !selectedMainCategory
     ) {
       setError("Please fill in all required fields.");
@@ -81,6 +82,7 @@ const AddCategoryPage = () => {
 
     const formData = new FormData();
     formData.append("name", categoryName);
+    formData.append("commissionPercentage", commissionPercentage);
     formData.append("image", categoryImage, categoryImage.name);
     formData.append("description", description);
     formData.append("maincategory", selectedMainCategory); // ✅ Send ObjectId, not name
@@ -92,6 +94,7 @@ const AddCategoryPage = () => {
         setSuccess("Category added successfully!");
         setCategoryName("");
         setDescription("");
+        setCommissionPercentage("");
         setCategoryImage(null);
         setPreviewImage("https://via.placeholder.com/120");
         setIsActive(false);
@@ -156,11 +159,23 @@ const AddCategoryPage = () => {
                   <TextField
                     fullWidth
                     variant="outlined"
+                    required
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                   />
                 </Grid>
-
+                <Grid item xs={12}>
+                  <Typography variant="body1" fontWeight="bold" mb={1}>
+                    COMMISSION PERCENTAGE 
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    required
+                    value={commissionPercentage}
+                    onChange={(e) => setCommissionPercentage(e.target.value)}
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body1" fontWeight="bold" mb={1}>
                     DESCRIPTION

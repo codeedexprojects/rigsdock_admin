@@ -13,7 +13,7 @@ import {
   getvendorProfileApi,
   updateVendorProfileApi,
 } from "../../services/allApi";
-import { BASE_URL } from "../../services/baseUrl";
+import { IMG_BASE_URL } from "../../services/baseUrl";
 
 function ViewVendorProfile() {
   const [profile, setProfile] = useState(null);
@@ -31,6 +31,7 @@ function ViewVendorProfile() {
 
         if (response.status === 200 && response.data.vendor) {
           setProfile(response.data.vendor);
+          
           setUpdatedProfile(response.data.vendor);
           setError(null);
         }
@@ -43,6 +44,8 @@ function ViewVendorProfile() {
     };
 
     fetchProfile();
+    console.log('profile',profile);
+
   }, []);
 
   const handleChange = (e) => {
@@ -151,11 +154,30 @@ function ViewVendorProfile() {
         </h2>
 
         <div className="vendorprofile-logo-container">
-        <img
-  src={profile.storelogo ? `${BASE_URL}/uploads/${profile.storelogo}` : "https://via.placeholder.com/150"}
-  alt="Store Logo"
-  className="vendorprofile-logo"
-/>
+          {isEditing ? (
+            <Form.Control
+              type="file"
+              name="storelogo"
+              accept="image/*"
+              onChange={(e) =>
+                setUpdatedProfile({
+                  ...updatedProfile,
+                  storelogo: e.target.files[0],
+                })
+              }
+              className="vendorprofile-input"
+            />
+          ) : (
+            <img
+              src={
+                profile.storelogo
+                  ? `${IMG_BASE_URL}/uploads/${profile.storelogo}`
+                  : "https://via.placeholder.com/150"
+              }
+              alt="Store Logo"
+              className="vendorprofile-logo"
+            />
+          )}
         </div>
 
         <div className="vendorprofile-status-badge">
@@ -300,7 +322,7 @@ function ViewVendorProfile() {
                     />
                     {updatedProfile.license instanceof File && (
                       <p className="vendorprofile-field-value vendorprofile-link">
-                        Current File:
+                        Current File:{" "}
                         <a
                           href={URL.createObjectURL(updatedProfile.license)}
                           target="_blank"
@@ -314,7 +336,7 @@ function ViewVendorProfile() {
                 ) : (
                   <p className="vendorprofile-field-value vendorprofile-link">
                     <a
-                      href={profile.license}
+                      href={`${IMG_BASE_URL}/uploads/${profile.license}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -341,6 +363,55 @@ function ViewVendorProfile() {
                     {profile.description}
                   </p>
                 )}
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label className="vendorprofile-field-label">
+                  GST
+                </Form.Label>
+               
+                  <p className="vendorprofile-field-value">
+                    {profile.gstNumber}
+                  </p>
+              
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="vendorprofile-field-label">
+                  ACCOUNT NUMBER
+                </Form.Label>
+              
+                  <p className="vendorprofile-field-value">
+                    {profile.accountNumber}
+                  </p>
+              
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label className="vendorprofile-field-label">
+                  PAN
+                </Form.Label>
+             
+                  <p className="vendorprofile-field-value">
+                    {profile.panNumber}
+                  </p>
+               
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="vendorprofile-field-label">
+                  IFSC
+                </Form.Label>
+              
+                  <p className="vendorprofile-field-value">
+                    {profile.ifscCode}
+                  </p>
+                
               </Form.Group>
             </Col>
           </Row>
@@ -460,6 +531,16 @@ function ViewVendorProfile() {
               </Form.Group>
             </Col>
           </Row>
+          <Row>
+            <Form.Group className="mb-3">
+              <Form.Label className="vendorprofile-field-label">
+                Working Days
+              </Form.Label>
+              <p className="vendorprofile-field-value">
+                {profile.workingDays?.join(", ") || "N/A"}
+              </p>
+            </Form.Group>
+          </Row>
         </div>
 
         <div className="vendorprofile-section">
@@ -478,7 +559,7 @@ function ViewVendorProfile() {
                   image instanceof File ? (
                     <img
                       key={index}
-                      src={URL.createObjectURL(image)}
+                      src={`${IMG_BASE_URL}/uploads/${image}`}
                       alt={`Preview ${index}`}
                     />
                   ) : null
@@ -488,7 +569,11 @@ function ViewVendorProfile() {
           ) : (
             <div className="vendorprofile-store-images">
               {profile.images.map((image, index) => (
-                <img key={index} src={image} alt={`Store ${index}`} />
+                <img
+                  key={index}
+                  src={`${IMG_BASE_URL}/uploads/${image}`}
+                  alt={`Store ${index}`}
+                />
               ))}
             </div>
           )}

@@ -275,7 +275,7 @@ const Coupon = () => {
             <FilterAltOutlinedIcon sx={{ color: "#9FA3A8" }} />
           </IconButton>
         </Box>
-        <Link to="/addProduct" style={{ textDecoration: "none" }}>
+        <Link to="/addcoupon" style={{ textDecoration: "none" }}>
           <Button
             variant="contained"
             color="primary"
@@ -387,7 +387,7 @@ const Coupon = () => {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F4F4F4" }}>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                   <Checkbox
                     checked={
                       selectedCouponIds.length === filteredCoupons.length &&
@@ -400,7 +400,7 @@ const Coupon = () => {
                     onChange={handleSelectAll}
                     disabled={filteredCoupons.length === 0}
                   />
-                </TableCell>
+                </TableCell> */}
                 <TableCell sx={{ color: "#212B36", fontWeight: "bold" }}>
                   COUPON NUMBER
                 </TableCell>
@@ -465,12 +465,12 @@ const Coupon = () => {
                     },
                   }}
                 >
-                <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
+                {/* <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
   <Checkbox
     checked={selectedCouponIds.includes(coupon._id)}
     onChange={() => handleRowClick(coupon._id)}
   />
-</TableCell>
+</TableCell> */}
 
 
                   <TableCell component="th" scope="row">

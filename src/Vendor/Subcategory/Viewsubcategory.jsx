@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { FilterList } from "@mui/icons-material";
 import { getvendorSubCategoriesApi } from "../../services/allApi";
-import { BASE_URL } from "../../services/baseUrl";
+import {  IMG_BASE_URL } from "../../services/baseUrl";
 
 const Viewsubcategory = () => {
   const [subCategories, setSubCategories] = useState([]);
@@ -120,69 +120,87 @@ const Viewsubcategory = () => {
         </Box>
       )}
 
-      {/* Error State */}
       {error && (
         <Box mt={3}>
           <Alert severity="error">{error}</Alert>
         </Box>
       )}
 
-      {!loading && !error && filteredSubCategories.length > 0 && (
-        <Grid container spacing={3}>
-          {filteredSubCategories.map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item._id}>
-              <Card sx={{ p: 2 }}>
-                <Box display="flex" alignItems="center">
-                  <CardMedia
-                    component="img"
-                    image={`${BASE_URL}/uploads/${item.image}`}
-                    alt={item.name}
-                    sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
-                  />
-                  <Box>
-                    <Typography variant="h6" fontWeight={600}>
-                      {item.name}
-                    </Typography>
-                    <Typography color="primary">{item._id}</Typography>
-                    <Typography variant="body2" mt={1}>
-                      {typeof item.description === "string"
-                        ? item.description
-                        : JSON.stringify(item.description)}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box display="flex" justifyContent="space-between" mt={2}>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      color="#9FA3A8"
-                      fontWeight={600}
-                    >
-                      CATEGORY
-                    </Typography>
-                    <Typography style={{ textAlign: "center" }}>
-                      <b>{item.category?.name || "N/A"}</b>
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      color="#9FA3A8"
-                      fontWeight={600}
-                    >
-                      STATUS
-                    </Typography>
-                    <Typography>
-                      <b>{item.status}</b>
-                    </Typography>
-                  </Box>
-                </Box>
-               
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+{!loading && !error && filteredSubCategories.length > 0 && (
+  <Grid container spacing={3}>
+    {filteredSubCategories.map((item) => (
+      <Grid item xs={12} sm={6} md={4} key={item._id}>
+        <Card sx={{ 
+          p: 2, 
+          height: '100%', 
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Box>
+            <Typography variant="h6" fontWeight={600}>
+              {item.name}
+            </Typography>
+            <Typography color="primary">{item._id}</Typography>
+            <Typography variant="body2" mt={1} sx={{ mb: 2 }}>
+              {typeof item.description === "string"
+                ? item.description
+                : JSON.stringify(item.description)}
+            </Typography>
+          </Box>
+          
+          <Box 
+            display="flex" 
+            justifyContent="space-between" 
+            mt="auto"
+            pt={1}
+          >
+            <Box sx={{ textAlign: "center" }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+              >
+                CATEGORY
+              </Typography>
+              <Typography style={{ textAlign: "center" }}>
+                <b>{item.category?.name || "N/A"}</b>
+              </Typography>
+            </Box>
+            
+            <Box sx={{ textAlign: "center" }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+              >
+                PRODUCTS
+              </Typography>
+              <Typography style={{ textAlign: "center" }}>
+                <b>{item.productCount || "0"}</b>
+              </Typography>
+            </Box>
+            
+            <Box sx={{ textAlign: "center" }}>
+              <Typography
+                variant="caption"
+                color="#9FA3A8"
+                fontWeight={600}
+                display="block"
+              >
+                STATUS
+              </Typography>
+              <Typography>
+                <b>{item.status}</b>
+              </Typography>
+            </Box>
+          </Box>
+        </Card>
+      </Grid>
+    ))}
+  </Grid>
+)}
       {!loading && !error && subCategories.length === 0 && (
         <Box display="flex" justifyContent="center" mt={4}>
           <Typography>No subcategories found.</Typography>

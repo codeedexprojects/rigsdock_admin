@@ -13,6 +13,7 @@ import {
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useNavigate } from "react-router-dom";
 import { getnotificationApi } from "../../../services/allApi";
+import {  IMG_BASE_URL } from "../../../services/baseUrl";
 
 const LatestNotification = ({ open, onClose }) => {
   const [notifications, setNotifications] = useState([]);
@@ -88,16 +89,16 @@ const LatestNotification = ({ open, onClose }) => {
           >
             Latest Notifications
           </Typography>
-          <Button variant="outlined" sx={{ px: 3 }} onClick={() => setNotifications([])}>
+          {/* <Button variant="outlined" sx={{ px: 3 }} onClick={() => setNotifications([])}>
             Mark all read
-          </Button>
+          </Button> */}
         </Box>
 
         <List sx={{ mt: 2 }}>
           {notifications.map((notification) => (
             <ListItem key={notification._id} divider>
               <ListItemAvatar>
-                <Avatar>{notification.image}</Avatar>
+                <Avatar>{`${IMG_BASE_URL}/uploads/${notification.image}`}</Avatar>
               </ListItemAvatar>
               <ListItemText
                 primary={notification.title}

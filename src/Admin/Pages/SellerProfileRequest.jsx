@@ -191,9 +191,7 @@ const SellerProfileRequest = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
+               
                 <TableCell>Seller Name</TableCell>
                 <TableCell>#ID</TableCell>
                 <TableCell>Email</TableCell>
@@ -229,12 +227,12 @@ const SellerProfileRequest = () => {
                       "&:hover": { backgroundColor: "#F5F5F5" },
                     }}
                   >
-                    <TableCell>
+                    {/* <TableCell>
                       <Checkbox
                         checked={selected.includes(row._id)}
                         onChange={() => handleCheckboxChange(row._id)}
                       />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={2}>
                         <Avatar src={row.images?.[0] || ""} />

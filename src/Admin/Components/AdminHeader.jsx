@@ -1,30 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
   IconButton,
-  Badge,
   Avatar,
   Divider,
 } from "@mui/material";
-import {  Notifications } from "@mui/icons-material";
-// import { styled } from "@mui/material/styles";
+import { Notifications } from "@mui/icons-material";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
-import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
-
-// const SearchBar = styled(Paper)({
-//   padding: "2px 4px",
-//   display: "flex",
-//   border: "none",
-//   alignItems: "center",
-//   width: "100%",
-//   maxWidth: 400,
-//   borderRadius: 8,
-//   boxShadow: "none",
-//   marginRight: "16px",
-// });
+import LatestNotification from "./Notification/LatestNotification";
+import LatestVendorNotification from "../../Vendor/vendornotification/LatestVendorNotification";
 
 const AdminHeader = () => {
+  const vendor = localStorage.getItem("rigsdock_vendor");
+  const admin = localStorage.getItem("rigsdock_admin");
+  const [openModal, setOpenModal] = useState(null); 
+
+  const handleNotificationClick = () => {
+    if (vendor) {
+      setOpenModal("vendor");
+    } else if (admin) {
+      setOpenModal("admin");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(null);
+  };
+
   return (
     <div>
       <Box
@@ -51,15 +54,15 @@ const AdminHeader = () => {
             {new Date().toLocaleDateString("en-GB")}
           </Typography>
 
-          <IconButton>
-            <Badge
+          <IconButton onClick={handleNotificationClick}>
+            {/* <Badge
               badgeContent="9"
               color="error"
               max={99}
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            >
+            > */}
               <Notifications sx={{ color: "#454F5B" }} />
-            </Badge>
+            {/* </Badge> */}
           </IconButton>
 
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -70,20 +73,39 @@ const AdminHeader = () => {
             />
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Avatar src="/avatar-placeholder.jpg" />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              padding: "6px 10px",
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              border: "1px solid #e0e0e0",
+            }}
+          >
+            <Avatar
+              src="/avatar-placeholder.jpg"
+              sx={{ width: 32, height: 32 }}
+            />
             <Box>
-              <Typography variant="subtitle2">Ziyad</Typography>
-              <Typography variant="caption" color="#0A5FBF">
-                Admin
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 500,
+                  color: "#333",
+                  fontSize: "14px",
+                  lineHeight: 1.2,
+                }}
+              >
+                {vendor ? "Vendor" : admin ? "Admin" : ""}
               </Typography>
             </Box>
-            <IconButton size="small">
-              <ExpandCircleDownOutlinedIcon sx={{ color: "#212B36" }} />
-            </IconButton>
           </Box>
         </Box>
       </Box>
+      {openModal === "admin" && <LatestNotification open={true} onClose={handleCloseModal} />}
+      {openModal === "vendor" && <LatestVendorNotification open={true} onClose={handleCloseModal} />}
     </div>
   );
 };

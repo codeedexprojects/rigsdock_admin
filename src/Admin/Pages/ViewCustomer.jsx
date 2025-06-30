@@ -305,7 +305,7 @@ const ViewCustomer = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#F4F4F4" }}>
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox
                       checked={selectedRows.length === currentItems.length && currentItems.length > 0}
                       indeterminate={
@@ -314,7 +314,7 @@ const ViewCustomer = () => {
                       }
                       onChange={handleSelectAll}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell sx={{ color: "#212B36", fontWeight: "bold" }}>
                     ALL CUSTOMER LIST
                   </TableCell>
@@ -389,7 +389,7 @@ const ViewCustomer = () => {
                         cursor: "pointer"
                       }}
                     >
-                      <TableCell
+                      {/* <TableCell
                         padding="checkbox"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -403,7 +403,7 @@ const ViewCustomer = () => {
                             handleRowClick(customer._id);
                           }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell component="th" scope="row">
                         {customer.username}
                       </TableCell>

@@ -121,44 +121,52 @@ const DashboardTables = () => {
         </Box>
 
         <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
-                Customer
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
-                Order I.D
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
-                Payment
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
-                Quantity
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
-                Status
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.map((order, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Avatar sx={{ width: 32, height: 32 }}></Avatar>
-                    {order?.user?.username ?? "N/A"}
-                  </Box>
-                </TableCell>
-                <TableCell>{order._id}</TableCell>
-                <TableCell>{order.payment}</TableCell>
-                <TableCell> {order.items?.length ?? 0}</TableCell>
-                <TableCell>
-                  <StatusChip label={order.paymentStatus} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
+            Customer
+          </TableCell>
+          <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
+            Order I.D
+          </TableCell>
+          <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
+            Payment
+          </TableCell>
+          <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
+            Quantity
+          </TableCell>
+          <TableCell sx={{ fontWeight: 600, fontSize: "14px" }}>
+            Status
+          </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {orders.map((order, index) => (
+          <TableRow key={index}>
+            <TableCell>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Avatar sx={{ width: 32, height: 32 }}>
+                  {order?.user?.name?.charAt(0) || order?.user?.username?.charAt(0) || 'U'}
+                </Avatar>
+                {order?.user?.name || order?.user?.username || "N/A"}
+              </Box>
+            </TableCell>
+            <TableCell>
+              {order._id}
+            </TableCell>
+            <TableCell>
+              {order.finalTotalPrice ? `₹${order.finalTotalPrice.toLocaleString()}` : order.payment || 'N/A'}
+            </TableCell>
+            <TableCell>
+              {order.items?.length ?? 0}
+            </TableCell>
+            <TableCell>
+              <StatusChip label={order.paymentStatus} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
 
         <Link to={"/orders"}>
           <Button sx={{ mt: 2, color: "#0066CC" }} fullWidth>

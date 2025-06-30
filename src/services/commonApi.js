@@ -1,18 +1,15 @@
 import axios from "axios";
 
-export const commonApi = async (
-  method,
-  url,
-  reqBody,
-  reqHeader = {}
-) => {
+export const commonApi = async (method, url, reqBody, reqHeader = {}) => {
+  const isFormData = reqBody instanceof FormData; // Check if reqBody is FormData
+
   const config = {
     method,
     url,
     data: reqBody,
     headers: {
-      "Content-Type": "application/json",
-      ...reqHeader, // Ensure Authorization header is merged correctly
+      ...(isFormData ? {} : { "Content-Type": "application/json" }), // Only set JSON if not FormData
+      ...reqHeader,
     },
   };
 
@@ -27,6 +24,3 @@ export const commonApi = async (
     };
   }
 };
-
-
-

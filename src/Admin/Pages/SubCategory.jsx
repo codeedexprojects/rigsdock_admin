@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  Card, CardMedia, Typography, Button, Grid, Box, TextField, Select, MenuItem, IconButton,
+  Card,
+  CardMedia,
+  Typography,
+  Button,
+  Grid,
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+  IconButton,
   CircularProgress,
   Alert,
   Pagination,
@@ -8,12 +17,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions
+  DialogActions,
 } from "@mui/material";
 import { Edit, Delete, Add, FilterList } from "@mui/icons-material";
-import { deleteSubCategoryApi, getSubCategoriesApi } from "../../services/allApi";
+import {
+  deleteSubCategoryApi,
+  getSubCategoriesApi,
+} from "../../services/allApi";
 import AddEditSubCategoryModal from "../Components/subcategory/AddEditSubCategoryModal";
-import { BASE_URL } from "../../services/baseUrl";
+import {  IMG_BASE_URL } from "../../services/baseUrl";
+import { toast, ToastContainer } from "react-toastify";
 
 const CategoryList = () => {
   const [subCategories, setSubCategories] = useState([]);
@@ -31,10 +44,9 @@ const CategoryList = () => {
     setOpenModal(true);
   };
 
-  // Close Modal
+  
   const handleCloseModal = () => setOpenModal(false);
 
-  // Fetch SubCategories
   useEffect(() => {
     const fetchSubCategories = async () => {
       setLoading(true);
@@ -42,7 +54,7 @@ const CategoryList = () => {
 
       try {
         const response = await getSubCategoriesApi(page);
-        console.log("subcategories",response);
+        console.log("subcategories", response);
 
         if (response.success) {
           setSubCategories(response.data.subCategories);
@@ -68,24 +80,46 @@ const CategoryList = () => {
     setDeleteModalOpen(true);
   };
 
-  // Delete SubCategory
   const handleDeleteConfirm = async () => {
-    if (!selectedSubCategory) return;
+    if (!selectedSubCategory) {
+      console.log("No subcategory selected for deletion.");
+      toast.warn("No subcategory selected.");
+      return;
+    }
+  
+    console.log("Attempting to delete subcategory:", selectedSubCategory);
+  
     try {
       const response = await deleteSubCategoryApi(selectedSubCategory._id);
-      if (response.success) {
-        setSubCategories(
-          subCategories.filter((item) => item._id !== selectedSubCategory._id)
+      console.log("Delete API Response:", response);
+  
+      if (response.message === "SubCategory deleted successfully") {
+        toast.success(response.message);
+    
+  
+        const updatedSubCategories = subCategories.filter(
+          (item) => item._id !== selectedSubCategory._id
         );
+        setSubCategories(updatedSubCategories);
+  
+        // If no items left and page > 1, go back a page
+        if (updatedSubCategories.length === 0 && page > 1) {
+          setPage(page - 1);
+        }
       } else {
-        alert("Failed to delete subcategory.");
+        console.warn("Deletion failed:", response.error || "Unknown error");
+        toast.error(response.error || "Failed to delete subcategory.");
       }
     } catch (err) {
-      alert("Error deleting subcategory.");
+      console.error("Error while deleting subcategory:", err);
+      toast.error("Error while deleting subcategory. Please try again.");
     } finally {
+      console.log("Closing delete modal.");
       setDeleteModalOpen(false);
+      setSelectedSubCategory(null); // Reset selection
     }
   };
+  
   const filteredSubCategories = subCategories
     .filter(
       (item) =>
@@ -101,8 +135,15 @@ const CategoryList = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header Section */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h5" fontWeight={600}>Sub Category List</Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h5" fontWeight={600}>
+          Sub Category List
+        </Typography>
         <Box display="flex" alignItems="center" gap={2}>
           <Typography>Show:</Typography>
           <Select defaultValue="All Products" variant="outlined" size="small">
@@ -111,8 +152,12 @@ const CategoryList = () => {
             <MenuItem value="Category 2">Category 2</MenuItem>
           </Select>
           <Typography>Sort by:</Typography>
-          <Select             onChange={(e) => setSort(e.target.value)}
- defaultValue="Default" variant="outlined" size="small">
+          <Select
+            onChange={(e) => setSort(e.target.value)}
+            defaultValue="Default"
+            variant="outlined"
+            size="small"
+          >
             <MenuItem value="Default">Default</MenuItem>
             <MenuItem value="Name">Name</MenuItem>
             <MenuItem value="Date">Date</MenuItem>
@@ -120,17 +165,28 @@ const CategoryList = () => {
           <IconButton>
             <FilterList />
           </IconButton>
-          <Button             onClick={() => handleOpenModal(null)}
- variant="contained" startIcon={<Add />} sx={{ backgroundColor: "#1976D2", color: "white" }}>
+          <Button
+            onClick={() => handleOpenModal(null)}
+            variant="contained"
+            startIcon={<Add />}
+            sx={{ backgroundColor: "#1976D2", color: "white" }}
+          >
             New Sub Category
           </Button>
         </Box>
       </Box>
       {/* Search Bar */}
-      <TextField value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} fullWidth variant="outlined" size="small" placeholder="Search by Name, category, Variant etc..." sx={{ mb: 3 }} />
+      <TextField
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        fullWidth
+        variant="outlined"
+        size="small"
+        placeholder="Search by Name, category, Variant etc..."
+        sx={{ mb: 3 }}
+      />
 
-{loading && (
+      {loading && (
         <Box display="flex" justifyContent="center" mt={3}>
           <CircularProgress />
         </Box>
@@ -144,53 +200,90 @@ const CategoryList = () => {
       )}
 
       {!loading && !error && filteredSubCategories.length > 0 && (
-
-      <Grid container spacing={3}>
-        {filteredSubCategories.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item._id}>
-            <Card sx={{ p: 2 }}>
-              <Box display="flex" alignItems="center">
-                <CardMedia
-                  component="img"
-                    image={`${BASE_URL}/uploads/${item.image}`}
-                  alt={item.name}
-                  sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
-                />
-                <Box>
-                  <Typography variant="h6" fontWeight={600}>{item.name}</Typography>
-                  <Typography color="primary">{item._id}</Typography>
-                  <Typography variant="body2" mt={1}>{typeof item.description === "string"
-                      ? item.description
-                      : JSON.stringify(item.description)}</Typography>
+        <Grid container spacing={3}>
+          {filteredSubCategories.map((item) => (
+            <Grid item xs={12} sm={6} md={4} key={item._id}>
+              <Card sx={{ p: 2 }}>
+                <Box display="flex" alignItems="center">
+                  <CardMedia
+                    component="img"
+                    image={`${IMG_BASE_URL}/uploads/${item.image}`}
+                    alt={item.name}
+                    sx={{ width: 100, height: 100, borderRadius: 2, mr: 2 }}
+                  />
+                  <Box>
+                    <Typography variant="h6" fontWeight={600}>
+                      {item.name}
+                    </Typography>
+                    <Typography color="primary">{item._id}</Typography>
+                    <Typography variant="body2" mt={1}>
+                      {typeof item.description === "string"
+                        ? item.description
+                        : JSON.stringify(item.description)}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-              <Box display="flex" justifyContent="space-between" mt={2}>
-                <Box>
-                  <Typography variant="caption" color="#9FA3A8" fontWeight={600}>CATEGORY</Typography>
-                  <Typography style={{ textAlign: "center" }}><b>{item.category?.name || "N/A"}</b></Typography>
+                <Box display="flex" justifyContent="space-between" mt={2}>
+                  <Box>
+                    <Typography
+                      variant="caption"
+                      color="#9FA3A8"
+                      fontWeight={600}
+                    >
+                      CATEGORY
+                    </Typography>
+                    <Typography style={{ textAlign: "center" }}>
+                      <b>{item.category?.name || "N/A"}</b>
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="caption"
+                      color="#9FA3A8"
+                      fontWeight={600}
+                    >
+                      STATUS
+                    </Typography>
+                    <Typography>
+                      <b>{item.status}</b>
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography variant="caption" color="#9FA3A8" fontWeight={600}>STATUS</Typography>
-                  <Typography><b>{item.status}</b></Typography>
+                <Box display="flex" gap={1} mt={2}>
+                  <Button
+                    onClick={() => handleOpenModal(item)}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#E3EDFE",
+                      color: "#1976D2",
+                      "&:hover": { backgroundColor: "#D0E2FD" },
+                    }}
+                    startIcon={<Edit />}
+                    fullWidth
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteClick(item)}
+                    variant="contained"
+                    sx={{ backgroundColor: "#F5F5F5", color: "#9E9E9E" }}
+                    startIcon={<Delete />}
+                    fullWidth
+                  >
+                    Delete
+                  </Button>
                 </Box>
-              </Box>
-              <Box display="flex" gap={1} mt={2}>
-                <Button                       onClick={() => handleOpenModal(item)}
- variant="contained" sx={{ backgroundColor: "#E3EDFE", color: "#1976D2", '&:hover': { backgroundColor: "#D0E2FD" }}} startIcon={<Edit />} fullWidth>Edit</Button>
-                <Button                       onClick={() => handleDeleteClick(item)}
- variant="contained" sx={{ backgroundColor: "#F5F5F5", color: "#9E9E9E" }} startIcon={<Delete />} fullWidth>Delete</Button>
-              </Box>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       )}
-        {!loading && !error && subCategories.length === 0 && (
+      {!loading && !error && subCategories.length === 0 && (
         <Box display="flex" justifyContent="center" mt={4}>
           <Typography>No subcategories found.</Typography>
         </Box>
       )}
-  {!loading && !error && subCategories.length > 0 && (
+      {!loading && !error && subCategories.length > 0 && (
         <Box display="flex" justifyContent="center" mt={4}>
           <Pagination
             count={totalPages}
@@ -226,6 +319,7 @@ const CategoryList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <ToastContainer></ToastContainer>
     </Box>
   );
 };

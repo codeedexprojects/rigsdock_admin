@@ -16,7 +16,7 @@ import {
   AddPhotoAlternate as AddImageIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
-  Upload as ImportIcon,
+  // Upload as ImportIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
 import {
@@ -31,6 +31,7 @@ const AddVendorProduct = () => {
     name: "",
     description: "",
     price: "",
+    finalPrice:"",
     discountprice: "",
     discountpercentage: "",
     offer: false,
@@ -45,6 +46,7 @@ const AddVendorProduct = () => {
     breadth:"",
     height:"",
     weight:"",
+    deliveryfee:"",
     attributes: {},
   });
 
@@ -226,7 +228,7 @@ const AddVendorProduct = () => {
   };
   const handleSubmit = async () => {
     try {
-      if (!formData.name || !formData.price || !formData.description) {
+      if (!formData.name  || !formData.description) {
         setAlert({
           open: true,
           message: "Please fill in all required fields",
@@ -289,6 +291,7 @@ const AddVendorProduct = () => {
           name: "",
           description: "",
           price: "",
+          finalPrice:"",
           discountprice: "",
           discountpercentage: "",
           offer: false,
@@ -302,6 +305,7 @@ const AddVendorProduct = () => {
           length:"",
           breadth:"",
           height:"",
+          deliveryfee:"",
           weight:"",
           attributes: {},
         });
@@ -463,7 +467,7 @@ const AddVendorProduct = () => {
 
         <Grid item xs={12} md={7}>
           <Card sx={{ borderRadius: 3, p: 2 }}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 variant="contained"
                 startIcon={<ImportIcon />}
@@ -475,7 +479,7 @@ const AddVendorProduct = () => {
               >
                 Import
               </Button>
-            </Box>
+            </Box> */}
 
             <Grid container spacing={2} mt={2}>
               <Grid item xs={12}>
@@ -502,7 +506,18 @@ const AddVendorProduct = () => {
                   required
                 />
               </Grid>
-
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Final Price"
+                  name="finalPrice"
+                  value={formData.finalPrice}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  type="number"
+                  required
+                />
+              </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -594,7 +609,19 @@ const AddVendorProduct = () => {
                   required
                 />
               </Grid>
-
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Delivery Fee"
+                  name="deliveryfee"
+                  value={formData.deliveryfee}
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                  required
+                />
+              </Grid>
 
               <Grid item xs={12}>
                 <TextField
